@@ -1,0 +1,819 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+    Plus,
+    Search,
+    Edit,
+    Trash2,
+    Utensils,
+    Beef,
+    Carrot,
+    Egg,
+    Fish,
+    Wheat,
+    Leaf,
+    Drumstick,
+    Coffee,
+    Cake,
+    Apple,
+    Upload
+} from "lucide-react"
+import { createClient } from "@/utils/supabase/client"
+
+
+const INGREDIENT_ICONS = [
+    { label: "General", value: "box", icon: Utensils },
+    { label: "Meat", value: "meat", icon: Beef },
+    { label: "Fruit", value: "fruit", icon: Apple },
+    { label: "Veggie", value: "leaf", icon: Leaf },
+    { label: "Egg", value: "egg", icon: Egg },
+    { label: "Fish", value: "fish", icon: Fish },
+    { label: "Grain", value: "wheat", icon: Wheat },
+]
+
+interface Ingredient {
+    name: string
+    amount: string
+    icon: string
+}
+
+interface Extra {
+    name: string
+    price: string
+}
+
+interface Category {
+    categoryid: string
+    categoryname: string
+}
+
+interface Dish {
+    id: string
+    title: string
+    desc: string
+    rating: number
+    calories: string
+    time: string
+    price: string
+    slug: string
+    image: string
+    categories: string[]
+    dietaryBalance: string
+    aiReview: {
+        summary: string
+        tags: string[]
+    }
+    ingredients: Ingredient[]
+    extras: Extra[]
+    diets: string[]
+    allergies: string[]
+    flavors: string[]
+    foodstatus: string
+}
+
+const DEFAULT_DISH: Partial<Dish> = {
+    title: "",
+    desc: "",
+    price: "",
+    time: "",
+    calories: "",
+    image: "/images/bunchahanoi.jpg",
+    rating: 5,
+    categories: [],
+    dietaryBalance: "Cân bằng",
+    aiReview: { summary: "", tags: [] },
+    ingredients: [],
+    extras: [],
+    diets: [],
+    allergies: [],
+    flavors: [],
+    foodstatus: "Available"
+}
+
+const FLAVORS = ["Ngọt", "Chua", "Cay", "Mặn", "Đắng"]
+const DIETARY_BALANCE = ["Cân bằng", "Vừa phải", "Nuông chiều"]
+const DIETS = ["Thuần chay", "Keto", "Ít carb", "Thực phẩm sạch"]
+const ALLERGIES = ["Hải sản", "Đậu phộng", "Sữa", "Trứng", "Gluten", "Đậu nành", "Lúa mì", "Hạt"]
+const PREDEFINED_TAGS = ["Nhiều Protein", "Ít béo", "Cân bằng Carb", "Nhiều chất xơ", "Ít đường", "Ít Calo"]
+
+const CATEGORY_ICON_MAP: Record<string, any> = {
+    "Món chính": Beef,
+    "Main Course": Beef,
+    "Sức khỏe": Leaf,
+    "Healthy Food": Leaf,
+    "Đồ uống": Coffee,
+    "Drinks": Coffee,
+    "Tráng miệng": Cake,
+    "Dessert": Cake,
+    "Mặc định": Utensils
+}
+
+const CATEGORY_NAME_TRANSLATIONS: Record<string, string> = {
+    "Main Course": "Món chính",
+    "Healthy Food": "Sức khỏe",
+    "Drinks": "Đồ uống",
+    "Dessert": "Tráng miệng",
+    "Food": "Món ăn"
+}
+
+export default function MenuManagement() {
+    const [dishes, setDishes] = useState<Dish[]>([])
+    const [isLoading, setIsLoading] = useState(true)
+    const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const [newDish, setNewDish] = useState<Partial<Dish>>(DEFAULT_DISH)
+    const [categories, setCategories] = useState<Category[]>([])
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [selectedFile, setSelectedFile] = useState<File | null>(null)
+    const [uploadError, setUploadError] = useState("")
+    const [editingDishId, setEditingDishId] = useState<string | null>(null)
+
+    const supabase = createClient()
+
+    useEffect(() => {
+        const initData = async () => {
+            setIsLoading(true);
+            await Promise.all([fetchDishes(), fetchCategories()]);
+            setIsLoading(false);
+        };
+        initData();
+    }, [])
+
+    const fetchCategories = async () => {
+        try {
+            const res = await fetch("/api/categories")
+            if (res.ok) {
+                const data: Category[] = await res.json()
+                setCategories(data)
+
+                if (data.length > 0 && (!newDish.categories || newDish.categories.length === 0)) {
+                    // Start with no categories or the first one if we want a default
+                    // For multi-select, it might be better to start empty or with a default
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching categories:", error)
+        }
+    }
+
+    const fetchDishes = async () => {
+        try {
+            const res = await fetch("/api/dishes")
+            if (!res.ok) throw new Error("Failed to fetch")
+            const data = await res.json()
+            setDishes(data)
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target
+        setNewDish(prev => ({ ...prev, [name]: value }))
+    }
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setSelectedFile(e.target.files[0])
+            setUploadError("")
+        }
+    }
+
+    const handleAiReviewChange = (field: 'summary' | 'tags', value: any) => {
+        setNewDish(prev => ({
+            ...prev,
+            aiReview: { ...prev.aiReview, [field]: value } as any
+        }))
+    }
+
+    const toggleTag = (tag: string) => {
+        const currentTags = newDish.aiReview?.tags || []
+        const newTags = currentTags.includes(tag)
+            ? currentTags.filter(t => t !== tag)
+            : [...currentTags, tag]
+        handleAiReviewChange('tags', newTags)
+    }
+
+
+    const addIngredient = () => {
+        setNewDish(prev => ({
+            ...prev,
+            ingredients: [...(prev.ingredients || []), { name: "", amount: "", icon: "box" }]
+        }))
+    }
+
+    const updateIngredient = (index: number, field: keyof Ingredient, value: string) => {
+        const updatedIngredients = [...(newDish.ingredients || [])]
+        updatedIngredients[index] = { ...updatedIngredients[index], [field]: value }
+        setNewDish(prev => ({ ...prev, ingredients: updatedIngredients }))
+    }
+
+    const removeIngredient = (index: number) => {
+        const updatedIngredients = [...(newDish.ingredients || [])]
+        updatedIngredients.splice(index, 1)
+        setNewDish(prev => ({ ...prev, ingredients: updatedIngredients }))
+    }
+
+
+    const addExtra = () => {
+        setNewDish(prev => ({
+            ...prev,
+            extras: [...(prev.extras || []), { name: "", price: "" }]
+        }))
+    }
+
+    const updateExtra = (index: number, field: keyof Extra, value: string) => {
+        const updatedExtras = [...(newDish.extras || [])]
+        updatedExtras[index] = { ...updatedExtras[index], [field]: value }
+        setNewDish(prev => ({ ...prev, extras: updatedExtras }))
+    }
+
+    const removeExtra = (index: number) => {
+        const updatedExtras = [...(newDish.extras || [])]
+        updatedExtras.splice(index, 1)
+        setNewDish(prev => ({ ...prev, extras: updatedExtras }))
+    }
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setIsSubmitting(true)
+        setUploadError("")
+
+        if (!newDish.categories || newDish.categories.length === 0) {
+            alert("Vui lòng chọn ít nhất một danh mục cho món ăn!");
+            setIsSubmitting(false);
+            return;
+        }
+
+        try {
+            let imageUrl = newDish.image
+
+
+            if (selectedFile) {
+                const fileExt = selectedFile.name.split('.').pop()
+                const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`
+                const filePath = `${fileName}`
+
+                const { data: uploadData, error: uploadError } = await supabase.storage
+                    .from('food-images')
+                    .upload(filePath, selectedFile)
+
+                if (uploadError) {
+                    console.error("Lỗi upload ảnh chi tiết:", uploadError)
+                    setUploadError(`Lỗi tải ảnh: ${uploadError.message || JSON.stringify(uploadError)}`)
+                    setIsSubmitting(false)
+                    return
+                }
+
+
+                const { data: publicUrlData } = supabase.storage
+                    .from('food-images')
+                    .getPublicUrl(filePath)
+
+                imageUrl = publicUrlData.publicUrl
+            }
+
+
+            const finalDish = { ...newDish, image: imageUrl }
+
+            const url = editingDishId ? `/api/dishes/${editingDishId}` : "/api/dishes"
+            const method = editingDishId ? "PUT" : "POST"
+
+            const res = await fetch(url, {
+                method: method,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(finalDish)
+            })
+
+            if (res.ok) {
+                alert(editingDishId ? "Cập nhật món ăn thành công!" : "Lưu món ăn thành công!");
+                await fetchDishes()
+                setIsDialogOpen(false)
+                setNewDish(DEFAULT_DISH)
+                setEditingDishId(null)
+                setSelectedFile(null)
+            } else {
+                const errorData = await res.json();
+                alert(`Lỗi khi lưu món ăn: ${errorData.error || "Không xác định"}`);
+            }
+        } catch (error: any) {
+            console.error("Lỗi khi lưu món ăn:", error)
+            alert(`Đã xảy ra lỗi: ${error.message || "Không thể kết nối với máy chủ"}`);
+        } finally {
+            setIsSubmitting(false)
+        }
+    }
+
+    const handleUpdateStatus = async (id: string, newStatus: string) => {
+        try {
+            const res = await fetch(`/api/dishes/${id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ foodstatus: newStatus })
+            })
+            if (res.ok) {
+                setDishes(prev => prev.map(dish =>
+                    dish.id === id ? { ...dish, foodstatus: newStatus } : dish
+                ))
+            } else {
+                const errorData = await res.json()
+                alert(`Lỗi: ${errorData.error || "Không thể cập nhật trạng thái"}`)
+            }
+        } catch (error) {
+            console.error("Lỗi khi cập nhật trạng thái món ăn:", error)
+            alert("Đã xảy ra lỗi khi kết nối với máy chủ")
+        }
+    }
+
+    const handleDelete = async (id: string) => {
+        if (!confirm("Bạn có chắc chắn muốn xóa món ăn này?")) return;
+
+        await handleUpdateStatus(id, 'Không có sẵn');
+    }
+
+    return (
+        <div className="space-y-6">
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight text-gray-900">Quản lý Thực đơn</h1>
+                    <p className="text-gray-500">Quản lý các món ăn trong nhà hàng của bạn</p>
+                </div>
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogTrigger asChild>
+                        <Button
+                            className="bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-200"
+                            onClick={() => {
+                                setNewDish(DEFAULT_DISH);
+                                setEditingDishId(null);
+                            }}
+                        >
+                            <Plus className="mr-2 h-4 w-4" /> Thêm món mới
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[700px] overflow-y-auto max-h-[90vh]">
+                        <DialogHeader>
+                            <DialogTitle>{editingDishId ? "Chỉnh sửa món ăn" : "Thêm món mới"}</DialogTitle>
+                            <DialogDescription>
+                                {editingDishId ? "Cập nhật chi tiết món ăn, nguyên liệu và các tùy chọn thêm." : "Tạo món ăn mới với các bộ lọc, nguyên liệu chi tiết và tùy chọn thêm."}
+                            </DialogDescription>
+                        </DialogHeader>
+                        <form onSubmit={handleSubmit} className="grid gap-6 py-4">
+
+                            <div className="grid gap-4">
+                                <h3 className="font-semibold text-gray-900 border-b pb-2">Thông tin cơ bản</h3>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="title">Tên món ăn</Label>
+                                    <Input id="title" name="title" value={newDish.title} onChange={handleInputChange} required />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="desc">Mô tả</Label>
+                                    <Input id="desc" name="desc" value={newDish.desc} onChange={handleInputChange} required />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="price">Giá</Label>
+                                        <Input id="price" name="price" value={newDish.price} onChange={handleInputChange} placeholder="v.d. 50.000 đ" required />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="time">Thời gian chuẩn bị</Label>
+                                        <Input id="time" name="time" value={newDish.time} onChange={handleInputChange} placeholder="v.d. 15-20 phút" required />
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="calories">Calories</Label>
+                                        <Input id="calories" name="calories" value={newDish.calories} onChange={handleInputChange} placeholder="v.d. 450 kcal" required />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="image">Hình ảnh món ăn</Label>
+                                        <div className="flex flex-col gap-2">
+                                            <div className="flex items-center gap-2">
+                                                <Input
+                                                    id="image"
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={handleFileChange}
+                                                    className="cursor-pointer"
+                                                />
+                                            </div>
+                                            {selectedFile && (
+                                                <p className="text-xs text-orange-600 font-medium">
+                                                    Đã chọn: {selectedFile.name}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-3">
+                                    <Label className="text-base font-semibold">Danh mục (Chọn nhiều)</Label>
+                                    <div className="space-y-2">
+                                        {categories.length > 0 ? (
+                                            categories.map(cat => {
+                                                const isSelected = newDish.categories?.includes(cat.categoryid)
+                                                const Icon = CATEGORY_ICON_MAP[cat.categoryname] || CATEGORY_ICON_MAP["Mặc định"]
+                                                return (
+                                                    <div
+                                                        key={cat.categoryid}
+                                                        onClick={() => {
+                                                            const current = newDish.categories || []
+                                                            const updated = current.includes(cat.categoryid)
+                                                                ? current.filter(id => id !== cat.categoryid)
+                                                                : [...current, cat.categoryid]
+                                                            setNewDish(prev => ({ ...prev, categories: updated }))
+                                                        }}
+                                                        className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${isSelected
+                                                            ? 'bg-orange-50 border-orange-500 text-orange-700'
+                                                            : 'bg-white border-gray-100 text-gray-600 hover:bg-gray-50'
+                                                            }`}
+                                                    >
+                                                        <Icon className={`h-5 w-5 ${isSelected ? 'text-orange-500' : 'text-gray-400'}`} />
+                                                        <span className="font-medium">{CATEGORY_NAME_TRANSLATIONS[cat.categoryname] || cat.categoryname}</span>
+                                                        {isSelected && <div className="ml-auto w-2 h-2 rounded-full bg-orange-500" />}
+                                                    </div>
+                                                )
+                                            })
+                                        ) : (
+                                            <p className="text-sm text-gray-500 italic pb-2">Không tìm thấy danh mục. Vui lòng thêm trong Supabase.</p>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="space-y-3">
+                                    <Label className="text-base font-semibold">Cân bằng dinh dưỡng</Label>
+                                    <div className="space-y-2">
+                                        {DIETARY_BALANCE.map(balance => (
+                                            <div key={balance} className="flex items-center space-x-2 p-2">
+                                                <Checkbox
+                                                    id={`balance-${balance}`}
+                                                    checked={newDish.dietaryBalance === balance}
+                                                    onCheckedChange={() => setNewDish(prev => ({ ...prev, dietaryBalance: balance }))}
+                                                    className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500 rounded-full h-5 w-5"
+                                                />
+                                                <label htmlFor={`balance-${balance}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
+                                                    {balance}
+                                                </label>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                {editingDishId && (
+                                    <div className="space-y-3">
+                                        <Label className="text-base font-semibold">Trạng thái hiển thị</Label>
+                                        <div className="flex gap-2">
+                                            <Button
+                                                type="button"
+                                                variant={newDish.foodstatus === "Available" ? "default" : "outline"}
+                                                className={newDish.foodstatus === "Available" ? "bg-green-600 hover:bg-green-700" : ""}
+                                                onClick={() => setNewDish(prev => ({ ...prev, foodstatus: "Available" }))}
+                                            >
+                                                Còn món
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                variant={newDish.foodstatus === "Out of Stock" ? "default" : "outline"}
+                                                className={newDish.foodstatus === "Out of Stock" ? "bg-yellow-600 hover:bg-yellow-700" : ""}
+                                                onClick={() => setNewDish(prev => ({ ...prev, foodstatus: "Out of Stock" }))}
+                                            >
+                                                Hết món
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                variant={newDish.foodstatus === "Unavailable" ? "default" : "outline"}
+                                                className={newDish.foodstatus === "Unavailable" ? "bg-red-600 hover:bg-red-700" : ""}
+                                                onClick={() => setNewDish(prev => ({ ...prev, foodstatus: "Unavailable" }))}
+                                            >
+                                                Ngừng bán
+                                            </Button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+
+
+                            <div className="grid grid-cols-1 gap-6">
+                                <div className="space-y-3">
+                                    <Label className="text-base font-semibold">Chế độ ăn</Label>
+                                    <div className="flex flex-wrap gap-2">
+                                        {DIETS.map(diet => (
+                                            <div key={diet} className="flex items-center space-x-2 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
+                                                <Checkbox
+                                                    id={`diet-${diet}`}
+                                                    checked={newDish.diets?.includes(diet)}
+                                                    onCheckedChange={() => {
+                                                        const current = newDish.diets || []
+                                                        setNewDish(prev => ({
+                                                            ...prev,
+                                                            diets: current.includes(diet) ? current.filter(d => d !== diet) : [...current, diet]
+                                                        }))
+                                                    }}
+                                                    className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500 rounded-full"
+                                                />
+                                                <label htmlFor={`diet-${diet}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
+                                                    {diet}
+                                                </label>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-3">
+                                    <Label className="text-base font-semibold">Dị ứng thực phẩm</Label>
+                                    <div className="flex flex-wrap gap-2">
+                                        {ALLERGIES.map(allergy => (
+                                            <div key={allergy} className="flex items-center space-x-2 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
+                                                <Checkbox
+                                                    id={`allergy-${allergy}`}
+                                                    checked={newDish.allergies?.includes(allergy)}
+                                                    onCheckedChange={() => {
+                                                        const current = newDish.allergies || []
+                                                        setNewDish(prev => ({
+                                                            ...prev,
+                                                            allergies: current.includes(allergy) ? current.filter(a => a !== allergy) : [...current, allergy]
+                                                        }))
+                                                    }}
+                                                    className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500 rounded-full"
+                                                />
+                                                <label htmlFor={`allergy-${allergy}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
+                                                    {allergy}
+                                                </label>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="space-y-3">
+                                    <Label className="text-base font-semibold">Hương vị</Label>
+                                    <div className="flex flex-wrap gap-2">
+                                        {FLAVORS.map(flavor => (
+                                            <div key={flavor} className="flex items-center space-x-2 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
+                                                <Checkbox
+                                                    id={`flavor-${flavor}`}
+                                                    checked={newDish.flavors?.includes(flavor)}
+                                                    onCheckedChange={() => {
+                                                        const current = newDish.flavors || []
+                                                        setNewDish(prev => ({
+                                                            ...prev,
+                                                            flavors: current.includes(flavor) ? current.filter(f => f !== flavor) : [...current, flavor]
+                                                        }))
+                                                    }}
+                                                    className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500 rounded-full"
+                                                />
+                                                <label htmlFor={`flavor-${flavor}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
+                                                    {flavor}
+                                                </label>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div className="grid gap-4">
+                                <h3 className="font-semibold text-gray-900 border-b pb-2 flex items-center gap-2">
+                                    SmartBite AI đánh giá
+                                    <span className="text-xs font-normal text-orange-500 bg-orange-50 px-2 py-0.5 rounded-full">Tự động</span>
+                                </h3>
+                                <div className="space-y-2">
+                                    <Label>Dinh dưỡng</Label>
+                                    <div className="flex flex-wrap gap-2">
+                                        {PREDEFINED_TAGS.map(tag => (
+                                            <div key={tag} className="flex items-center space-x-2 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
+                                                <Checkbox
+                                                    id={`tag-${tag}`}
+                                                    checked={newDish.aiReview?.tags?.includes(tag)}
+                                                    onCheckedChange={() => toggleTag(tag)}
+                                                    className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
+                                                />
+                                                <label htmlFor={`tag-${tag}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
+                                                    {tag}
+                                                </label>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="aiSummary">Tóm tắt AI</Label>
+                                    <textarea
+                                        id="aiSummary"
+                                        className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        value={newDish.aiReview?.summary}
+                                        onChange={(e) => handleAiReviewChange('summary', e.target.value)}
+                                        placeholder="Mô tả đánh giá từ AI..."
+                                    ></textarea>
+                                </div>
+                            </div>
+
+
+                            <div className="grid gap-4">
+                                <div className="flex items-center justify-between border-b pb-2">
+                                    <h3 className="font-semibold text-gray-900">Nguyên liệu chính</h3>
+                                    <Button type="button" variant="outline" size="sm" onClick={addIngredient} className="text-orange-600 border-orange-200 hover:bg-orange-50">
+                                        <Plus className="h-3 w-3 mr-1" /> Thêm
+                                    </Button>
+                                </div>
+                                {newDish.ingredients?.map((ing, idx) => (
+                                    <div key={idx} className="flex gap-3 items-end p-3 bg-gray-50 rounded-lg relative group">
+                                        <div className="flex-1 space-y-1">
+                                            <Label className="text-xs">Biểu tượng</Label>
+                                            <select
+                                                className="w-full h-9 rounded-md border border-input bg-white px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                                value={ing.icon}
+                                                onChange={(e) => updateIngredient(idx, 'icon', e.target.value)}
+                                            >
+                                                {INGREDIENT_ICONS.map(icon => (
+                                                    <option key={icon.value} value={icon.value}>{icon.label === 'Meat' ? 'Thịt' : icon.label === 'Fruit' ? 'Trái cây' : icon.label === 'Veggie' ? 'Rau củ' : icon.label === 'Egg' ? 'Trứng' : icon.label === 'Fish' ? 'Cá' : icon.label === 'Grain' ? 'Ngũ cốc' : 'Chung'}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className="flex-[2] space-y-1">
+                                            <Label className="text-xs">Tên</Label>
+                                            <Input value={ing.name} onChange={(e) => updateIngredient(idx, 'name', e.target.value)} placeholder="v.d. Cơm trắng" className="h-9 bg-white" />
+                                        </div>
+                                        <div className="flex-1 space-y-1">
+                                            <Label className="text-xs">Số lượng</Label>
+                                            <Input value={ing.amount} onChange={(e) => updateIngredient(idx, 'amount', e.target.value)} placeholder="150g" className="h-9 bg-white" />
+                                        </div>
+                                        <Button type="button" variant="ghost" size="icon" onClick={() => removeIngredient(idx)} className="h-9 w-9 text-red-500 hover:bg-red-50 hover:text-red-700">
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                ))}
+                                {(!newDish.ingredients || newDish.ingredients.length === 0) && (
+                                    <p className="text-sm text-gray-500 italic text-center py-2">Chưa có nguyên liệu nào.</p>
+                                )}
+                            </div>
+
+
+                            <div className="grid gap-4">
+                                <div className="flex items-center justify-between border-b pb-2">
+                                    <h3 className="font-semibold text-gray-900">Tùy chọn thêm</h3>
+                                    <Button type="button" variant="outline" size="sm" onClick={addExtra} className="text-orange-600 border-orange-200 hover:bg-orange-50">
+                                        <Plus className="h-3 w-3 mr-1" /> Thêm
+                                    </Button>
+                                </div>
+                                {newDish.extras?.map((extra, idx) => (
+                                    <div key={idx} className="flex gap-3 items-end p-3 bg-gray-50 rounded-lg">
+                                        <div className="flex-[2] space-y-1">
+                                            <Label className="text-xs">Tên</Label>
+                                            <Input value={extra.name} onChange={(e) => updateExtra(idx, 'name', e.target.value)} placeholder="v.d. Thêm sốt Teriyaki" className="h-9 bg-white" />
+                                        </div>
+                                        <div className="flex-1 space-y-1">
+                                            <Label className="text-xs">Giá</Label>
+                                            <Input value={extra.price} onChange={(e) => updateExtra(idx, 'price', e.target.value)} placeholder="+5.000 đ" className="h-9 bg-white" />
+                                        </div>
+                                        <Button type="button" variant="ghost" size="icon" onClick={() => removeExtra(idx)} className="h-9 w-9 text-red-500 hover:bg-red-50 hover:text-red-700">
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                ))}
+                                {(!newDish.extras || newDish.extras.length === 0) && (
+                                    <p className="text-sm text-gray-500 italic text-center py-2">Chưa có tùy chọn thêm nào.</p>
+                                )}
+                            </div>
+
+                            <DialogFooter className="mt-6 sticky bottom-0 bg-white pt-2 border-t">
+                                <Button type="submit" disabled={isSubmitting} className="bg-orange-500 hover:bg-orange-600 text-white w-full sm:w-auto">
+                                    {isSubmitting ? "Đang lưu..." : (editingDishId ? "Cập nhật món ăn" : "Lưu món ăn")}
+                                </Button>
+                            </DialogFooter>
+                        </form>
+                    </DialogContent>
+                </Dialog>
+
+
+            </div>
+
+            <Card className="border-gray-100 shadow-sm">
+                <CardHeader>
+                    <div className="flex items-center justify-between">
+                        <CardTitle>Thực đơn</CardTitle>
+                        <div className="relative w-64 hidden md:block">
+                            <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                            <Input placeholder="Tìm kiếm món ăn..." className="pl-8 bg-gray-50 border-gray-200 focus-visible:ring-orange-500" />
+                        </div>
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    {isLoading ? (
+                        <div className="text-center py-4 text-gray-500">Đang tải...</div>
+                    ) : (
+                        <div className="rounded-lg border border-gray-100 overflow-hidden">
+                            <table className="w-full text-sm text-left">
+                                <thead className="bg-gray-50 text-gray-500 font-medium border-b border-gray-100">
+                                    <tr>
+                                        <th className="p-4">Ảnh</th>
+                                        <th className="p-4">Tên món</th>
+                                        <th className="p-4">Danh mục</th>
+                                        <th className="p-4">Giá</th>
+                                        <th className="p-4">Trạng thái</th>
+                                        <th className="p-4 text-right">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100">
+                                    {dishes.map((dish) => (
+                                        <tr key={dish.id} className="hover:bg-gray-50/50 transition-colors">
+                                            <td className="p-4">
+                                                <img
+                                                    src={dish.image}
+                                                    alt={dish.title}
+                                                    className="w-12 h-12 rounded-lg object-cover bg-gray-100"
+                                                />
+                                            </td>
+                                            <td className="p-4 font-medium text-gray-900">{dish.title}</td>
+                                            <td className="p-4">
+                                                <div className="flex flex-wrap gap-1">
+                                                    {(dish.categories || []).map(catId => {
+                                                        const cat = categories.find(c => c.categoryid === catId);
+                                                        const catName = cat ? cat.categoryname : catId;
+                                                        return (
+                                                            <span key={catId} className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-medium bg-orange-50 text-orange-700 border border-orange-100">
+                                                                {CATEGORY_NAME_TRANSLATIONS[catName] || catName}
+                                                            </span>
+                                                        );
+                                                    })}
+                                                    {(!dish.categories || dish.categories.length === 0) && (
+                                                        <span className="text-gray-400 text-xs italic">Chưa chọn</span>
+                                                    )}
+                                                </div>
+                                            </td>
+                                            <td className="p-4 text-gray-600 font-medium">{dish.price}</td>
+                                            <td className="p-4">
+                                                <select
+                                                    value={dish.foodstatus}
+                                                    onChange={(e) => handleUpdateStatus(dish.id, e.target.value)}
+                                                    className={`text-xs font-medium rounded-full px-2 py-1 border border-gray-200 focus:ring-2 focus:ring-orange-200 cursor-pointer outline-none
+                                                        ${dish.foodstatus === "Available" ? "bg-green-50 text-green-700 border-green-100" :
+                                                            dish.foodstatus === "Out of Stock" ? "bg-yellow-50 text-yellow-700 border-yellow-100" : "bg-red-50 text-red-700 border-red-100"}`}
+                                                >
+                                                    <option value="Available">Còn bán</option>
+                                                    <option value="Out of Stock">Hết hàng</option>
+                                                    <option value="Unavailable">Ngừng bán</option>
+                                                </select>
+                                            </td>
+
+                                            <td className="p-4 text-right">
+                                                <div className="flex justify-end gap-2">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                                        onClick={async () => {
+                                                            try {
+                                                                const res = await fetch(`/api/dishes/${dish.id}`);
+                                                                if (res.ok) {
+                                                                    const fullDish = await res.json();
+                                                                    setNewDish(fullDish);
+                                                                    setEditingDishId(dish.id);
+                                                                    setIsDialogOpen(true);
+                                                                } else {
+                                                                    alert("Không thể tải chi tiết món ăn.");
+                                                                }
+                                                            } catch (error) {
+                                                                console.error("Error fetching dish details:", error);
+                                                                alert("Đã xảy ra lỗi khi tải chi tiết món ăn.");
+                                                            }
+                                                        }}
+                                                    >
+                                                        <Edit className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {dishes.length === 0 && (
+                                        <tr>
+                                            <td colSpan={6} className="p-8 text-center text-gray-500">
+                                                Chưa có món ăn nào. Thêm món ăn đầu tiên của bạn!
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
+        </div>
+    )
+}
