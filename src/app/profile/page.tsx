@@ -38,15 +38,9 @@ export default function ProfilePage() {
             <main className="container mx-auto px-4 py-8 md:py-12">
 
                 <div className="mb-6 md:mb-8">
-                    <div className="flex flex-wrap items-center gap-2 mb-3">
-                        <span className="bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 text-[10px] md:text-xs font-semibold px-2 py-1 rounded-full flex items-center gap-1">
-                            <Sparkles className="w-3 h-3" /> Hỗ trợ bởi AI
-                        </span>
-                        <span className="text-gray-400 dark:text-gray-500 text-[10px] md:text-sm font-bold tracking-widest uppercase">Thiết lập hồ sơ</span>
-                    </div>
                     <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2 leading-tight">Hồ sơ & Chỉ số sức khỏe</h1>
                     <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 max-w-3xl leading-relaxed">
-                        Cung cấp thông tin sức khỏe của bạn để AI của SmartBite có thể thiết kế thực đơn dinh dưỡng tối ưu dành riêng cho bạn.
+                        Cung cấp thông tin sức khỏe của bạn để SmartBite có thể gợi ý thực đơn dinh dưỡng tối ưu dành riêng cho bạn.
                     </p>
                 </div>
 
@@ -218,17 +212,7 @@ export default function ProfilePage() {
                         </div>
 
 
-                        <div className="flex flex-col md:flex-row justify-end items-center gap-4 pt-4 md:pt-6">
-                            <Button
-                                onClick={() => {
-                                    alert("Tạo thực đơn AI thành công!");
-                                    router.push("/");
-                                }}
-                                className="w-full md:w-auto bg-orange-500 hover:bg-orange-600 text-white rounded-full px-8 py-7 md:py-6 text-base font-bold shadow-lg shadow-orange-500/20 order-1 md:order-2"
-                            >
-                                Tạo thực đơn AI →
-                            </Button>
-                        </div>
+
 
                     </div>
 

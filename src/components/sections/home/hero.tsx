@@ -45,12 +45,7 @@ export function Hero() {
                                 </Button>
                             </Link>
 
-                            <a href="/profile">
-                                <Button size="lg" variant="outline" className="bg-white/10 dark:bg-gray-800/40 text-white border-white/20 hover:bg-white/20 rounded-full h-12 px-8 font-semibold transition-all">
-                                    <span className="mr-2 not-italic">👤</span>
-                                    Hồ sơ của tôi
-                                </Button>
-                            </a>
+
                         </div>
 
 

@@ -109,28 +109,28 @@ export function AddToCart({ price, dish, selectedExtras }: AddToCartProps) {
     }
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-950 p-4 border-t border-gray-100 dark:border-gray-800 md:static md:bg-transparent md:border-t-0 md:p-0 transition-colors">
-            <div className="flex items-center gap-4 container mx-auto md:px-0">
-                <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 transition-colors">
+        <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-950 p-3 sm:p-4 border-t border-gray-100 dark:border-gray-800 md:static md:bg-transparent md:border-t-0 md:p-0 transition-colors z-50">
+            <div className="flex items-center gap-2 sm:gap-4 container mx-auto md:px-0 max-w-full overflow-hidden">
+                <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 transition-colors shrink-0">
                     <button
                         onClick={decreaseQuantity}
-                        className="w-10 h-10 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-primary transition-colors"
+                        className="w-8 h-10 sm:w-10 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-primary transition-colors"
                     >
-                        <Minus className="w-4 h-4" />
+                        <Minus className="w-3.5 h-3.5" />
                     </button>
-                    <span className="w-8 text-center font-medium text-gray-900 dark:text-gray-100">{quantity}</span>
+                    <span className="w-6 sm:w-8 text-center font-bold text-gray-900 dark:text-gray-100 text-sm sm:text-base">{quantity}</span>
                     <button
                         onClick={increaseQuantity}
-                        className="w-10 h-10 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-primary transition-colors"
+                        className="w-8 h-10 sm:w-10 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-primary transition-colors"
                     >
-                        <Plus className="w-4 h-4" />
+                        <Plus className="w-3.5 h-3.5" />
                     </button>
                 </div>
 
                 <Button
                     onClick={handleAddToCart}
                     disabled={dish?.foodstatus === "Out of Stock"}
-                    className={`flex-1 h-12 text-base font-semibold transition-all rounded-xl shadow-lg 
+                    className={`flex-1 h-11 sm:h-12 text-sm sm:text-base font-bold transition-all rounded-xl shadow-lg min-w-0 px-2
                         ${dish?.foodstatus === "Out of Stock"
                             ? "bg-gray-200 text-gray-500 cursor-not-allowed shadow-none"
                             : "bg-primary hover:bg-orange-600 text-white shadow-orange-200 dark:shadow-none"}`}
@@ -138,14 +138,15 @@ export function AddToCart({ price, dish, selectedExtras }: AddToCartProps) {
                     {dish?.foodstatus === "Out of Stock" ? (
                         "Đã hết món"
                     ) : (
-                        <>
-                            <ShoppingCart className="w-5 h-5 mr-2" />
-                            Thêm vào giỏ hàng {price ? `• ${price}` : ''}
-                        </>
+                        <div className="flex items-center justify-center gap-1.5 w-full">
+                            <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+                            <span className="truncate">Thêm giỏ hàng</span>
+                            {price && <span className="whitespace-nowrap shrink-0 ml-auto pl-1 hidden xs:block">• {price}</span>}
+                        </div>
                     )}
                 </Button>
 
-                <div className="w-12 h-12 flex items-center justify-center bg-orange-50 dark:bg-orange-950/20 rounded-xl text-orange-500 dark:text-orange-400 cursor-pointer hover:bg-orange-100 dark:hover:bg-orange-900/40 transition-colors border border-transparent dark:border-orange-800/30">
+                <div className="hidden sm:flex w-12 h-12 items-center justify-center bg-orange-50 dark:bg-orange-950/20 rounded-xl text-orange-500 dark:text-orange-400 cursor-pointer hover:bg-orange-100 dark:hover:bg-orange-900/40 transition-colors border border-transparent dark:border-orange-800/30 shrink-0">
                     <Info className="w-6 h-6" />
                 </div>
             </div>

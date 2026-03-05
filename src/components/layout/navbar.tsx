@@ -259,12 +259,7 @@ export function Navbar() {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href="/profile" className="cursor-pointer flex items-center">
-                    <User className="mr-2 h-4 w-4 text-gray-500" />
-                    <span>Hồ sơ cá nhân</span>
-                  </Link>
-                </DropdownMenuItem>
+
                 <DropdownMenuItem asChild>
                   <Link href="/profile/history" className="cursor-pointer flex items-center">
                     <History className="mr-2 h-4 w-4 text-gray-500" />

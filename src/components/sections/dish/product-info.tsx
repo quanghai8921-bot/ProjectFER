@@ -41,7 +41,7 @@ export function ProductInfo({
                 <div className="flex justify-between items-start">
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{title}</h1>
                     <div className="text-right">
-                        <div className="text-2xl font-bold text-orange-500">{price}</div>
+                        <div className="text-2xl font-bold text-orange-500 whitespace-nowrap">{price}</div>
                         {originalPrice && (
                             <div className="text-sm text-gray-400 line-through">
                                 {originalPrice}

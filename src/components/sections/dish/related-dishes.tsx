@@ -53,7 +53,7 @@ export function RelatedDishes({ currentDishId }: { currentDishId?: string }) {
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {dishes.map((dish: any, index) => (
                     <Link key={dish.id || index} href={`/dishes/${dish.id}`}>
-                        <Card className={`overflow-hidden h-full bg-white dark:bg-gray-900 hover:shadow-xl transition-all duration-500 border-gray-100 dark:border-gray-800 group cursor-pointer ${dish.foodstatus === "Out of Stock" ? "grayscale opacity-60" : ""}`}>
+                        <Card className={`overflow-hidden h-full bg-white dark:bg-gray-900 hover:shadow-xl transition-all duration-500 border-gray-100 dark:border-gray-800 group cursor-pointer p-0 gap-0 ${dish.foodstatus === "Out of Stock" ? "grayscale opacity-60" : ""}`}>
                             <div className="relative aspect-[4/3] bg-gray-100 dark:bg-gray-800 overflow-hidden">
                                 <img
                                     src={dish.image || "/images/placeholder.jpg"}
