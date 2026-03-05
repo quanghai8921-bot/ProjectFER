@@ -1,34 +1,15 @@
 "use client"
 
-import {
-    TrendingUp,
-    TrendingDown,
-    MoreHorizontal
-} from "lucide-react"
+import { useState, useEffect } from "react"
+import { TrendingUp, TrendingDown, MoreHorizontal } from "lucide-react"
 import {
     AreaChart,
     Area,
     XAxis,
     YAxis,
-    CartesianGrid,
     Tooltip,
     ResponsiveContainer
 } from 'recharts'
-
-const salesData = [
-    { name: 'Mon', value: 4000 },
-    { name: 'Tue', value: 3000 },
-    { name: 'Wed', value: 5000 },
-    { name: 'Thu', value: 2780 },
-    { name: 'Fri', value: 1890 },
-    { name: 'Sat', value: 6390 },
-    { name: 'Sun', value: 3490 },
-]
-
-
-const simpleWaveData = [
-    { value: 10 }, { value: 20 }, { value: 15 }, { value: 30 }, { value: 25 }, { value: 40 }, { value: 35 }, { value: 50 }
-]
 
 const SimpleAreaChart = ({ color, data }: { color: string, data: any[] }) => (
     <ResponsiveContainer width="100%" height={50}>
@@ -44,90 +25,155 @@ const SimpleAreaChart = ({ color, data }: { color: string, data: any[] }) => (
     </ResponsiveContainer>
 )
 
+interface DashboardStats {
+    totalRevenue: number;
+    totalOrders: number;
+    totalCustomers: number;
+    salesTrend: { date: string, revenue: number }[];
+}
+
+interface PopularDish {
+    id: string;
+    name: string;
+    orders: number;
+    percent: number;
+    image?: string;
+}
+
 export default function AdminDashboard() {
+    const [stats, setStats] = useState<DashboardStats | null>(null);
+    const [popularDishes, setPopularDishes] = useState<PopularDish[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchDashboardData = async () => {
+            try {
+                setIsLoading(true);
+                const [statsRes, ordersRes] = await Promise.all([
+                    fetch('/api/admin/stats'),
+                    fetch('/api/orders')
+                ]);
+
+                if (statsRes.ok && ordersRes.ok) {
+                    const statsData = await statsRes.json();
+                    const ordersData = await ordersRes.json();
+
+                    setStats(statsData.stats);
+
+                    // Calculate popular dishes from orders
+                    const dishSales: Record<string, { count: number, name: string, image?: string }> = {};
+                    ordersData.orders.forEach((order: any) => {
+                        order.orderitems.forEach((item: any) => {
+                            const foodId = item.foodid;
+                            if (!dishSales[foodId]) {
+                                dishSales[foodId] = {
+                                    count: 0,
+                                    name: item.fooditems?.foodname || "Món ăn ẩn",
+                                    image: item.fooditems?.foodimageurl
+                                };
+                            }
+                            dishSales[foodId].count += (item.quantity || 1);
+                        });
+                    });
+
+                    const sortedDishes = Object.entries(dishSales)
+                        .map(([id, data]) => ({
+                            id,
+                            name: data.name,
+                            orders: data.count,
+                            image: data.image,
+                            percent: 100 // To be calculated relative to top seller
+                        }))
+                        .sort((a, b) => b.orders - a.orders)
+                        .slice(0, 5);
+
+                    const topSeller = sortedDishes[0]?.orders || 1;
+                    sortedDishes.forEach(d => d.percent = (d.orders / topSeller) * 100);
+
+                    setPopularDishes(sortedDishes);
+                }
+            } catch (error) {
+                console.error("Dashboard data fetch error:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchDashboardData();
+    }, []);
+
+    const formatCurrency = (amount: number) => {
+        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+    }
+
+    if (isLoading) {
+        return <div className="p-8 text-center text-gray-500">Đang tải dữ liệu thực tế...</div>;
+    }
+
     return (
         <div className="space-y-6">
-
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-
-                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="bg-white dark:bg-gray-900 p-6 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
                     <div className="flex justify-between items-start mb-4">
                         <div>
-                            <p className="text-gray-500 text-sm font-medium">Doanh thu</p>
-                            <h3 className="text-2xl font-bold text-gray-900 mt-1">$128,430</h3>
+                            <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Doanh thu</p>
+                            <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">
+                                {formatCurrency(stats?.totalRevenue || 0)}
+                            </h3>
                         </div>
-                        <div className="flex items-center gap-1 text-green-500 bg-green-50 px-2 py-1 rounded-full text-xs font-bold">
+                        <div className="flex items-center gap-1 text-green-500 bg-green-50 dark:bg-green-950/30 px-2 py-1 rounded-full text-xs font-bold">
                             <TrendingUp className="h-3 w-3" />
-                            <span>+12%</span>
+                            <span>+Thực tế</span>
                         </div>
                     </div>
-                    <SimpleAreaChart color="#F97316" data={simpleWaveData} />
+                    <SimpleAreaChart color="#F97316" data={stats?.salesTrend.map(s => ({ value: s.revenue })) || []} />
                 </div>
 
-
-                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+                <div className="bg-white dark:bg-gray-900 p-6 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
                     <div className="flex justify-between items-start mb-4">
                         <div>
-                            <p className="text-gray-500 text-sm font-medium">Tổng đơn hàng</p>
-                            <h3 className="text-2xl font-bold text-gray-900 mt-1">15,204</h3>
+                            <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Tổng đơn hàng</p>
+                            <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">
+                                {stats?.totalOrders || 0}
+                            </h3>
                         </div>
-                        <div className="flex items-center gap-1 text-green-500 bg-green-50 px-2 py-1 rounded-full text-xs font-bold">
+                        <div className="flex items-center gap-1 text-green-500 bg-green-50 dark:bg-green-950/30 px-2 py-1 rounded-full text-xs font-bold">
                             <TrendingUp className="h-3 w-3" />
-                            <span>+5%</span>
+                            <span>+{stats?.totalOrders}</span>
                         </div>
                     </div>
-                    <SimpleAreaChart color="#F97316" data={simpleWaveData.map(i => ({ value: i.value * 0.8 }))} />
+                    <SimpleAreaChart color="#F97316" data={Array(8).fill(0).map(() => ({ value: Math.random() * 50 }))} />
                 </div>
 
-
-                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+                <div className="bg-white dark:bg-gray-900 p-6 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
                     <div className="flex justify-between items-start mb-4">
                         <div>
-                            <p className="text-gray-500 text-sm font-medium">Người dùng hoạt động</p>
-                            <h3 className="text-2xl font-bold text-gray-900 mt-1">8,942</h3>
+                            <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Khách hàng</p>
+                            <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">
+                                {stats?.totalCustomers || 0}
+                            </h3>
                         </div>
-                        <div className="flex items-center gap-1 text-green-500 bg-green-50 px-2 py-1 rounded-full text-xs font-bold">
+                        <div className="flex items-center gap-1 text-green-500 bg-green-50 dark:bg-green-950/30 px-2 py-1 rounded-full text-xs font-bold">
                             <TrendingUp className="h-3 w-3" />
-                            <span>+18%</span>
+                            <span>Hoạt động</span>
                         </div>
                     </div>
-                    <SimpleAreaChart color="#F97316" data={simpleWaveData.slice().reverse()} />
-                </div>
-
-
-                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
-                    <div className="flex justify-between items-start mb-4">
-                        <div>
-                            <p className="text-gray-500 text-sm font-medium">Tỷ lệ tăng trưởng</p>
-                            <h3 className="text-2xl font-bold text-gray-900 mt-1">24.5%</h3>
-                        </div>
-                        <div className="flex items-center gap-1 text-green-500 bg-green-50 px-2 py-1 rounded-full text-xs font-bold">
-                            <TrendingUp className="h-3 w-3" />
-                            <span>+2%</span>
-                        </div>
-                    </div>
-                    <SimpleAreaChart color="#F97316" data={simpleWaveData} />
+                    <SimpleAreaChart color="#F97316" data={Array(8).fill(0).map(() => ({ value: Math.random() * 50 }))} />
                 </div>
             </div>
 
-
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-                <div className="lg:col-span-2 bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                <div className="lg:col-span-2 bg-white dark:bg-gray-900 p-6 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm">
                     <div className="flex items-center justify-between mb-8">
                         <div>
-                            <h3 className="text-lg font-bold text-gray-900">Phân tích doanh thu</h3>
-                            <p className="text-sm text-gray-500 mt-1">Theo dõi doanh thu trong 7 ngày qua</p>
+                            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Xu hướng doanh thu</h3>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Biểu đồ doanh thu 7 ngày gần nhất</p>
                         </div>
-                        <button className="flex items-center gap-2 text-sm font-medium text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg hover:bg-gray-100">
-                            Weekly
-                        </button>
                     </div>
 
                     <div className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={salesData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                            <AreaChart data={stats?.salesTrend.map(s => ({ name: new Date(s.date).toLocaleDateString('vi-VN', { weekday: 'short' }), value: s.revenue })) || []} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                                 <defs>
                                     <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
                                         <stop offset="5%" stopColor="#F97316" stopOpacity={0.2} />
@@ -135,7 +181,7 @@ export default function AdminDashboard() {
                                     </linearGradient>
                                 </defs>
                                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#9CA3AF', fontSize: 12 }} dy={10} />
-                                <Tooltip />
+                                <Tooltip formatter={(value: any) => formatCurrency(Number(value) || 0)} />
                                 <Area
                                     type="monotone"
                                     dataKey="value"
@@ -149,28 +195,21 @@ export default function AdminDashboard() {
                     </div>
                 </div>
 
-
-                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                <div className="bg-white dark:bg-gray-900 p-6 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm">
                     <div className="mb-6">
-                        <h3 className="text-lg font-bold text-gray-900">Món ăn phổ biến</h3>
-                        <p className="text-sm text-gray-500 mt-1">Top món ăn bán chạy</p>
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Top món ăn bán chạy</h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Dựa trên số lượng đơn hàng thực tế</p>
                     </div>
                     <div className="space-y-6">
-                        {[
-                            { name: "Quinoa Power Bowl", orders: "1,240", percent: 85 },
-                            { name: "Avocado Toast XL", orders: "980", percent: 70 },
-                            { name: "Grilled Salmon Salad", orders: "850", percent: 55 },
-                            { name: "Acai Super Berry", orders: "720", percent: 45 },
-                            { name: "Mediterranean Wrap", orders: "640", percent: 35 },
-                        ].map((item, i) => (
+                        {popularDishes.map((item, i) => (
                             <div key={i}>
                                 <div className="flex justify-between text-sm font-medium mb-2">
-                                    <span className="text-gray-900">{item.name}</span>
-                                    <span className="text-gray-500">{item.orders} đơn</span>
+                                    <span className="text-gray-900 dark:text-gray-100">{item.name}</span>
+                                    <span className="text-gray-500 dark:text-gray-400">{item.orders} suất</span>
                                 </div>
-                                <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                                <div className="h-2 w-full bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                                     <div
-                                        className="h-full bg-orange-500 rounded-full"
+                                        className="h-full bg-orange-500 rounded-full transition-all duration-1000"
                                         style={{ width: `${item.percent}%` }}
                                     ></div>
                                 </div>
@@ -180,42 +219,40 @@ export default function AdminDashboard() {
                 </div>
             </div>
 
-
-            <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-                <div className="p-6 border-b border-gray-50">
-                    <h3 className="text-lg font-bold text-gray-900">Tóm tắt hiệu suất gần đây</h3>
+            <div className="bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
+                <div className="p-6 border-b border-gray-50 dark:border-gray-800">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Hiệu suất món ăn theo doanh số</h3>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left">
-                        <thead className="text-xs text-gray-500 uppercase bg-gray-50/50">
+                        <thead className="text-xs text-gray-500 dark:text-gray-400 uppercase bg-gray-50/50 dark:bg-gray-800/50">
                             <tr>
-                                <th className="px-6 py-4 font-bold tracking-wider">Ngày</th>
-                                <th className="px-6 py-4 font-bold tracking-wider">Chỉ số</th>
-                                <th className="px-6 py-4 font-bold tracking-wider">Giá trị hiện tại</th>
-                                <th className="px-6 py-4 font-bold tracking-wider">Trạng thái</th>
+                                <th className="px-6 py-4 font-bold tracking-wider">Món ăn</th>
+                                <th className="px-6 py-4 font-bold tracking-wider text-center">Số suất bán được</th>
+                                <th className="px-6 py-4 font-bold tracking-wider text-right">Tỉ lệ so với top</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-50">
-                            <tr>
-                                <td className="px-6 py-4 text-gray-900 font-medium">24/10/2023</td>
-                                <td className="px-6 py-4 text-gray-600">Số lượng đăng ký hoạt động</td>
-                                <td className="px-6 py-4 text-gray-900">2,431</td>
-                                <td className="px-6 py-4">
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Xuất sắc
-                                    </span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td className="px-6 py-4 text-gray-900 font-medium">23/10/2023</td>
-                                <td className="px-6 py-4 text-gray-600">Hiệu quả giao hàng</td>
-                                <td className="px-6 py-4 text-gray-900">94.2%</td>
-                                <td className="px-6 py-4">
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                        Ổn định
-                                    </span>
-                                </td>
-                            </tr>
+                        <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
+                            {popularDishes.map((dish, idx) => (
+                                <tr key={dish.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors">
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center gap-3">
+                                            {dish.image && (
+                                                <div className="w-8 h-8 rounded-lg overflow-hidden border border-gray-100 dark:border-gray-800">
+                                                    <img src={dish.image} alt={dish.name} className="w-full h-full object-cover" />
+                                                </div>
+                                            )}
+                                            <span className="text-gray-900 dark:text-gray-100 font-medium">{dish.name}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 text-center text-gray-600 dark:text-gray-400">{dish.orders}</td>
+                                    <td className="px-6 py-4 text-right">
+                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${idx === 0 ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'}`}>
+                                            {Math.round(dish.percent)}%
+                                        </span>
+                                    </td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
                 </div>

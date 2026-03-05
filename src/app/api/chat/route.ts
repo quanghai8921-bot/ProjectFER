@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 
         const supabase = await createClient();
 
-        // Lấy danh sách món ăn từ database để làm context
+        // 1. Lấy danh sách món ăn từ database để làm context
         const { data: dishes, error: dishesError } = await supabase
             .from('fooditems')
             .select('foodname, descriptions, price, calories, preptime, allergyinfo, ingredients')
@@ -27,37 +27,38 @@ export async function POST(req: NextRequest) {
             console.error("Error fetching dishes for chat context:", dishesError);
         }
 
-        const menuContext = (dishes || []).map(dish => {
-            let metadata = { ingredients: [] };
+        // 2. Chuyển đổi dữ liệu món ăn thành chuỗi văn bản cho AI dễ hiểu
+        const menuContext = (dishes || []).map((dish: any) => {
+            let ingredientsList = 'N/A';
             try {
-                if (dish.ingredients && typeof dish.ingredients === 'string') {
-                    if (dish.ingredients.startsWith('{') || dish.ingredients.startsWith('[')) {
-                        metadata = JSON.parse(dish.ingredients);
+                if (dish.ingredients) {
+                    const parsed = typeof dish.ingredients === 'string'
+                        ? JSON.parse(dish.ingredients)
+                        : dish.ingredients;
+
+                    if (Array.isArray(parsed.ingredients)) {
+                        ingredientsList = parsed.ingredients.map((i: any) => i.name || i).join(', ');
+                    } else if (typeof parsed === 'string') {
+                        ingredientsList = parsed;
                     }
-                } else if (typeof dish.ingredients === 'object' && dish.ingredients !== null) {
-                    metadata = dish.ingredients;
                 }
             } catch (e) {
-                console.warn(`Error parsing ingredients for dish ${dish.foodname}:`, e);
+                ingredientsList = typeof dish.ingredients === 'string' ? dish.ingredients : 'N/A';
             }
-
-            const ingredientsList = Array.isArray(metadata?.ingredients)
-                ? metadata.ingredients.map((i: any) => i.name || i).join(', ')
-                : (typeof dish.ingredients === 'string' ? dish.ingredients : 'N/A');
 
             return `- ${dish.foodname}: ${dish.descriptions}. Giá: ${(dish.price || 0).toLocaleString('vi-VN')}đ, Calo: ${dish.calories || 0}kcal, Thời gian: ${dish.preptime || 0}p. Thành phần: ${ingredientsList}. Dị ứng: ${dish.allergyinfo || 'N/A'}`;
         }).join('\n') || "Hiện tại không có món ăn nào trong thực đơn.";
 
         console.log(`Successfully built menu context with ${dishes?.length || 0} dishes.`);
 
-        // Gọi Supabase Edge Function bằng fetch trực tiếp để dễ debug
+        // 3. Gọi Supabase Edge Function "smartbite-ai"
         const functionUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/smartbite-ai`;
         const edgeResponse = await fetch(functionUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
-                'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+                'Authorization': `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+                'apikey': process.env.SUPABASE_SERVICE_ROLE_KEY!,
             },
             body: JSON.stringify({
                 messages,
@@ -66,34 +67,30 @@ export async function POST(req: NextRequest) {
         });
 
         const responseText = await edgeResponse.text();
-        let edgeData: any = null;
+        let responseData: any;
         try {
-            edgeData = JSON.parse(responseText);
+            responseData = JSON.parse(responseText);
         } catch (e) {
-            console.error("Non-JSON response from Edge Function:", responseText);
+            responseData = { error: responseText };
         }
 
         if (!edgeResponse.ok) {
-            console.error("Edge Function Error Status:", edgeResponse.status, responseText);
+            console.error("Edge Function Error Details:", responseText);
             return NextResponse.json(
-                { error: "No content returned from AI" },
-                { status: 500 }
+                { error: `Lỗi AI (${edgeResponse.status}): ` + (responseData.error || responseText || "Không xác định") },
+                { status: edgeResponse.status }
             );
         }
 
         return NextResponse.json({
             role: "assistant",
-            content: edgeData?.content || "Không có phản hồi từ AI."
+            content: responseData.content || "Không có phản hồi từ AI."
         });
 
     } catch (error: any) {
         console.error("Error in chat API:", error);
         return NextResponse.json(
-            {
-                error: error.message || "Lỗi không xác định",
-                details: error.stack,
-                status: "failed"
-            },
+            { error: "Lỗi hệ thống: " + (error.message || "Lỗi không xác định") },
             { status: 500 }
         );
     }

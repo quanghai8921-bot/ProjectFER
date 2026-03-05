@@ -10,16 +10,19 @@ export async function POST(request: Request) {
 
         const supabase = await createClient();
 
-        
+
         const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
             email, password,
         });
 
         if (authError) {
-            return NextResponse.json({ error: authError.message }, { status: 401 });
+            const errorMessage = authError.message === 'Invalid login credentials'
+                ? 'Tài khoản hoặc mật khẩu không đúng'
+                : authError.message;
+            return NextResponse.json({ error: errorMessage }, { status: 401 });
         }
 
-        
+
         const { data: userRole } = await supabase
             .from('userroles')
             .select('roleid')
@@ -29,7 +32,7 @@ export async function POST(request: Request) {
 
         const isAdmin = !!userRole;
 
-        
+
         if (isAdmin) {
             const cookieStore = await cookies();
             cookieStore.set('admin_token', 'secure-admin-token-value', {
@@ -41,25 +44,25 @@ export async function POST(request: Request) {
             });
         }
 
-        
-        
+
+
         const { error: upsertError } = await supabase
             .from('users')
             .upsert({
                 userid: authData.user.id,
                 email: authData.user.email,
                 fullname: email.split('@')[0],
-                birthdate: '2000-01-01', 
-                phonenumber: '0000000000', 
-                addressdelivery: 'Chưa cập nhật' 
+                birthdate: '2000-01-01',
+                phonenumber: '0000000000',
+                addressdelivery: 'Chưa cập nhật'
             }, { onConflict: 'userid' });
 
         if (upsertError) {
             console.error('Lỗi khi đồng bộ User Profile:', upsertError);
-            
+
         }
 
-        
+
         const { data: userProfile } = await supabase
             .from('users')
             .select('*')

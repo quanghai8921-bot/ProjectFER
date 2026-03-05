@@ -170,15 +170,15 @@ function MenuContent() {
     });
 
     return (
-        <div className="min-h-screen bg-[#FDFDFD] font-sans">
+        <div className="min-h-screen bg-[#FDFDFD] dark:bg-gray-950 font-sans transition-colors duration-300">
             <Navbar />
 
 
-            <div className="bg-white border-b sticky top-16 z-30 shadow-sm hidden md:block">
+            <div className="bg-white dark:bg-gray-900 border-b dark:border-gray-800 sticky top-16 z-30 shadow-sm hidden md:block transition-colors">
                 <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-gray-400 w-full max-w-md bg-gray-50 rounded-full px-4 py-2 border border-gray-100 focus-within:ring-2 focus-within:ring-orange-100 transition-all">
+                    <div className="flex items-center gap-2 text-gray-400 w-full max-w-md bg-gray-50 dark:bg-gray-800 rounded-full px-4 py-2 border border-gray-100 dark:border-gray-700 focus-within:ring-2 focus-within:ring-orange-100 transition-all">
                         <Search className="w-5 h-5" />
-                        <input type="text" placeholder="Tìm kiếm món ăn giàu Protein..." className="bg-transparent border-none outline-none w-full text-sm text-gray-700 placeholder:text-gray-400" />
+                        <input type="text" placeholder="Tìm kiếm món ăn giàu Protein..." className="bg-transparent border-none outline-none w-full text-sm text-gray-700 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-500" />
                         <Zap className="w-4 h-4 text-orange-500" />
                     </div>
                 </div>
@@ -189,7 +189,7 @@ function MenuContent() {
 
                 <div className="w-full lg:w-72 flex-shrink-0 space-y-8">
 
-                    <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+                    <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 transition-colors">
                         <div className="flex items-center gap-2 mb-4 text-orange-600 font-bold tracking-wide text-[10px] uppercase">
                             <Dumbbell className="w-3 h-3" />
                             Mục tiêu dinh dưỡng
@@ -197,10 +197,10 @@ function MenuContent() {
 
                         <div className="mb-2 flex justify-between items-end">
                             <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Calo còn lại</span>
-                            <span className="text-3xl font-bold text-gray-900 leading-none">650 <span className="text-xs font-medium text-gray-400">kcal</span></span>
+                            <span className="text-3xl font-bold text-gray-900 dark:text-gray-100 leading-none">650 <span className="text-xs font-medium text-gray-400 dark:text-gray-500">kcal</span></span>
                         </div>
 
-                        <div className="h-2 bg-gray-100 rounded-full overflow-hidden mb-3">
+                        <div className="h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden mb-3">
                             <div className="h-full bg-gradient-to-r from-orange-400 to-orange-600 w-[65%]" />
                         </div>
 
@@ -212,13 +212,13 @@ function MenuContent() {
 
 
                     <div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-4">Danh mục</h3>
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Danh mục</h3>
                         <div className="space-y-2">
                             <button
                                 onClick={() => setSelectedCategory("All")}
                                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all font-bold ${selectedCategory === "All"
-                                    ? "bg-orange-500 text-white shadow-lg shadow-orange-200"
-                                    : "bg-white text-gray-500 hover:bg-gray-50 border border-transparent hover:border-gray-100"
+                                    ? "bg-primary text-white shadow-md shadow-primary/20"
+                                    : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 border border-transparent hover:border-gray-100 dark:hover:border-gray-700"
                                     }`}
                             >
                                 <UtensilsCrossed className="w-5 h-5" />
@@ -232,8 +232,8 @@ function MenuContent() {
                                         key={cat.categoryid}
                                         onClick={() => setSelectedCategory(cat.categoryid)}
                                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all font-medium ${selectedCategory === cat.categoryid
-                                            ? "bg-orange-500 text-white shadow-lg shadow-orange-200"
-                                            : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+                                            ? "bg-primary text-white shadow-md shadow-primary/20"
+                                            : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
                                             }`}
                                     >
                                         <Icon className="w-5 h-5" />
@@ -246,9 +246,9 @@ function MenuContent() {
 
 
                     <Accordion type="multiple" defaultValue={["balance", "diet"]} className="space-y-4">
-                        <AccordionItem value="balance" className="bg-white rounded-2xl border border-gray-100 px-4 overflow-hidden">
+                        <AccordionItem value="balance" className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 overflow-hidden">
                             <AccordionTrigger className="hover:no-underline py-4">
-                                <span className="text-base font-bold text-gray-900">Cân bằng dinh dưỡng</span>
+                                <span className="text-base font-bold text-gray-900 dark:text-gray-100">Cân bằng dinh dưỡng</span>
                             </AccordionTrigger>
                             <AccordionContent className="pt-2 pb-4 space-y-3">
                                 {["Cân bằng", "Vừa phải", "Nuông chiều"].map((type) => (
@@ -261,7 +261,7 @@ function MenuContent() {
                                         />
                                         <label
                                             htmlFor={`balance-${type}`}
-                                            className="text-gray-500 font-medium group-hover:text-orange-500 transition-colors cursor-pointer select-none flex-1"
+                                            className="text-gray-500 dark:text-gray-400 font-medium group-hover:text-orange-500 transition-colors cursor-pointer select-none flex-1"
                                         >
                                             {type}
                                         </label>
@@ -270,9 +270,9 @@ function MenuContent() {
                             </AccordionContent>
                         </AccordionItem>
 
-                        <AccordionItem value="diet" className="bg-white rounded-2xl border border-gray-100 px-4 overflow-hidden">
+                        <AccordionItem value="diet" className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 overflow-hidden">
                             <AccordionTrigger className="hover:no-underline py-4">
-                                <span className="text-base font-bold text-gray-900">Chế độ ăn</span>
+                                <span className="text-base font-bold text-gray-900 dark:text-gray-100">Chế độ ăn</span>
                             </AccordionTrigger>
                             <AccordionContent className="pt-2 pb-4 space-y-3">
                                 {["Thuần chay", "Keto", "Ít carb", "Eat Clean"].map((type) => (
@@ -294,9 +294,9 @@ function MenuContent() {
                             </AccordionContent>
                         </AccordionItem>
 
-                        <AccordionItem value="allergies" className="bg-white rounded-2xl border border-gray-100 px-4 overflow-hidden">
+                        <AccordionItem value="allergies" className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 overflow-hidden">
                             <AccordionTrigger className="hover:no-underline py-4">
-                                <span className="text-base font-bold text-gray-900">Loại trừ dị ứng</span>
+                                <span className="text-base font-bold text-gray-900 dark:text-gray-100">Loại trừ dị ứng</span>
                             </AccordionTrigger>
                             <AccordionContent className="pt-2 pb-4 space-y-3">
                                 {["Hải sản", "Đậu phộng", "Sữa", "Trứng", "Gluten", "Đậu nành", "Lúa mì", "Hạt"].map((type) => (
@@ -318,16 +318,16 @@ function MenuContent() {
                             </AccordionContent>
                         </AccordionItem>
 
-                        <AccordionItem value="flavor" className="bg-white rounded-2xl border border-gray-100 px-4 overflow-hidden">
+                        <AccordionItem value="flavor" className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 overflow-hidden">
                             <AccordionTrigger className="hover:no-underline py-4">
-                                <span className="text-base font-bold text-gray-900">Hương vị</span>
+                                <span className="text-base font-bold text-gray-900 dark:text-gray-100">Hương vị</span>
                             </AccordionTrigger>
                             <AccordionContent className="pt-2 pb-4 flex flex-wrap gap-2">
                                 {["Ngọt", "Chua", "Cay", "Mặn", "Đắng"].map((type) => (
                                     <button
                                         key={type}
                                         onClick={() => toggleFlavor(type)}
-                                        className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${selectedFlavors.includes(type) ? 'bg-orange-100 border-orange-500 text-orange-700' : 'bg-white border-gray-200 text-gray-600 hover:border-orange-300'}`}
+                                        className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${selectedFlavors.includes(type) ? 'bg-orange-100 dark:bg-orange-900/30 border-orange-500 text-orange-700 dark:text-orange-400' : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-orange-300'}`}
                                     >
                                         {type}
                                     </button>
@@ -341,13 +341,13 @@ function MenuContent() {
                 <div className="flex-1">
                     <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                         <div>
-                            <h2 className="text-3xl font-bold text-gray-900">Thực đơn của chúng tôi</h2>
+                            <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Thực đơn của chúng tôi</h2>
                             <p className="text-gray-500 mt-1">Vui lòng chọn món ăn và đặt hàng ngay!</p>
                         </div>
 
                         <div className="flex items-center gap-2">
                             <span className="text-xs text-gray-400 font-bold uppercase tracking-wider">Sắp xếp theo:</span>
-                            <button className="flex items-center gap-1 font-bold text-gray-900 hover:text-orange-500 transition-colors text-sm">
+                            <button className="flex items-center gap-1 font-bold text-gray-900 dark:text-gray-100 hover:text-orange-500 transition-colors text-sm">
                                 Liên quan <ChevronDown className="w-4 h-4" />
                             </button>
                         </div>
@@ -366,9 +366,9 @@ function MenuContent() {
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredItems.map((item) => (
                                 <Link href={`/dishes/${item.id}`} key={item.id} className="block group h-full">
-                                    <Card className={`h-full overflow-hidden border-none shadow-sm hover:shadow-xl transition-all duration-300 bg-white rounded-[2rem] flex flex-col ${item.foodstatus === "Out of Stock" ? "grayscale opacity-60 relative after:absolute after:inset-0 after:bg-white/20 after:z-10" : ""}`}>
+                                    <Card className={`h-full overflow-hidden border-none shadow-sm hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-900 rounded-[2rem] flex flex-col p-0 gap-0 ${item.foodstatus === "Out of Stock" ? "grayscale opacity-60 relative after:absolute after:inset-0 after:bg-white/20 dark:after:bg-black/20 after:z-10" : ""}`}>
 
-                                        <div className="relative aspect-[5/4] bg-gray-100 overflow-hidden">
+                                        <div className="relative aspect-[5/4] bg-gray-100 dark:bg-gray-800/50 overflow-hidden w-full">
                                             {item.image ? (
                                                 <img
                                                     src={item.image}
@@ -388,7 +388,7 @@ function MenuContent() {
                                                     Hết hàng
                                                 </div>
                                             ) : item.aiReview?.tags && item.aiReview.tags.length > 0 && (
-                                                <div className={`absolute top-4 left-4 bg-orange-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm z-10 uppercase tracking-wide`}>
+                                                <div className={`absolute top-4 left-4 bg-primary text-white text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm z-10 uppercase tracking-wide`}>
                                                     <Zap className="w-3 h-3 fill-current" />
                                                     {item.aiReview.tags[0]}
                                                 </div>
@@ -396,18 +396,18 @@ function MenuContent() {
                                         </div>
 
 
-                                        <CardContent className="p-6 flex flex-col flex-1">
+                                        <CardContent className="p-6 pb-4 flex flex-col flex-1">
                                             <div className="flex justify-between items-start mb-2">
-                                                <h3 className="font-bold text-lg text-gray-900 group-hover:text-orange-500 transition-colors line-clamp-1 leading-tight">
+                                                <h3 className="font-bold text-lg text-gray-900 dark:text-gray-100 group-hover:text-orange-500 transition-colors line-clamp-1 leading-tight">
                                                     {item.title}
                                                 </h3>
-                                                <div className="flex items-center gap-1 bg-gray-50 px-1.5 py-0.5 rounded-md flex-shrink-0">
+                                                <div className="flex items-center gap-1 bg-gray-50 dark:bg-gray-800 px-1.5 py-0.5 rounded-md flex-shrink-0">
                                                     <span className="text-orange-500 text-[10px]">★</span>
-                                                    <span className="text-[10px] font-bold text-gray-700">{item.rating}</span>
+                                                    <span className="text-[10px] font-bold text-gray-700 dark:text-gray-300">{item.rating}</span>
                                                 </div>
                                             </div>
 
-                                            <p className="text-xs text-gray-500 line-clamp-2 mb-4 leading-relaxed flex-1">
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-4 leading-relaxed flex-1">
                                                 {item.desc}
                                             </p>
 
@@ -430,13 +430,13 @@ function MenuContent() {
                                                 )}
                                             </div>
 
-                                            <div className="flex items-center justify-between pt-2 mt-auto border-t border-gray-50">
+                                            <div className="flex items-center justify-between pt-4 mt-auto border-t border-gray-50 dark:border-gray-800/50">
                                                 <div className="font-bold text-xl text-orange-600">{item.price}</div>
                                                 <Button
                                                     size="icon"
                                                     variant="secondary"
                                                     disabled={item.foodstatus === "Out of Stock"}
-                                                    className={`h-10 w-10 rounded-full bg-white border border-gray-100 text-gray-400 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm group-hover:shadow-md ${item.foodstatus === "Out of Stock" ? "opacity-50 cursor-not-allowed bg-gray-50" : ""}`}
+                                                    className={`h-10 w-10 rounded-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-gray-400 hover:bg-black hover:text-white dark:hover:bg-orange-500 dark:hover:border-orange-500 hover:border-black transition-all shadow-sm group-hover:shadow-md ${item.foodstatus === "Out of Stock" ? "opacity-50 cursor-not-allowed bg-gray-50 dark:bg-gray-800" : ""}`}
                                                 >
                                                     <Plus className="w-5 h-5" />
                                                 </Button>
@@ -453,8 +453,8 @@ function MenuContent() {
                             <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6 text-gray-300">
                                 <Search className="w-10 h-10" />
                             </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-2">Không tìm thấy món ăn</h3>
-                            <p className="text-gray-500 max-w-md mx-auto mb-6">
+                            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Không tìm thấy món ăn</h3>
+                            <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto mb-6">
                                 {dishes.length === 0
                                     ? "Thực đơn hiện đang trống. Vui lòng truy cập Bảng quản trị để thêm món mới."
                                     : "Chúng tôi không tìm thấy món ăn nào phù hợp với bộ lọc của bạn."}
@@ -472,7 +472,7 @@ function MenuContent() {
                 </div>
             </div>
             <Footer />
-        </div>
+        </div >
     );
 }
 

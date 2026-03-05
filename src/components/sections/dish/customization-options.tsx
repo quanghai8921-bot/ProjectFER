@@ -21,7 +21,7 @@ export function CustomizationOptions({ extras, selectedExtras, onToggleExtra }: 
 
     return (
         <div className="space-y-4">
-            <h3 className="font-bold text-gray-900">Tùy chọn thêm</h3>
+            <h3 className="font-bold text-gray-900 dark:text-gray-100">Tùy chọn thêm</h3>
             <div className="space-y-3">
                 {extras.map((extra, idx) => {
                     const isSelected = !!selectedExtras[idx]
@@ -32,20 +32,20 @@ export function CustomizationOptions({ extras, selectedExtras, onToggleExtra }: 
                             className={cn(
                                 "flex items-center justify-between p-4 rounded-xl border-2 transition-all cursor-pointer",
                                 isSelected
-                                    ? "border-primary bg-primary/5"
-                                    : "border-gray-100 hover:border-gray-200"
+                                    ? "border-primary bg-primary/5 dark:bg-primary/10"
+                                    : "border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700 bg-white dark:bg-gray-900"
                             )}
                         >
                             <div className="flex items-center gap-3">
                                 <div className={cn(
                                     "w-5 h-5 rounded-full border flex items-center justify-center transition-colors",
-                                    isSelected ? "bg-primary border-primary text-white" : "border-gray-300"
+                                    isSelected ? "bg-primary border-primary text-white" : "border-gray-300 dark:border-gray-600"
                                 )}>
                                     {isSelected && <Check className="w-3 h-3" />}
                                 </div>
-                                <span className="text-gray-700 font-medium">{extra.name}</span>
+                                <span className="text-gray-700 dark:text-gray-300 font-medium">{extra.name}</span>
                             </div>
-                            <span className="text-gray-900 font-semibold">
+                            <span className="text-gray-900 dark:text-gray-100 font-semibold">
                                 {extra.price}
                             </span>
                         </div>

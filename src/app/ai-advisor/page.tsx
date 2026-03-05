@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, KeyboardEvent } from "react";
 import { Navbar } from "@/components/layout/navbar";
+import { useTheme } from "@/components/providers/theme-provider";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ReactMarkdown from "react-markdown";
@@ -19,8 +20,6 @@ import {
     X,
     Paperclip,
     FileText,
-    Moon,
-    Sun,
     Trash2,
     Search
 } from "lucide-react";
@@ -53,7 +52,8 @@ export default function AIAdvisorPage() {
     const recognitionRef = useRef<any>(null);
     const originalInputRef = useRef("");
     const [isRecording, setIsRecording] = useState(false);
-    const [isDarkMode, setIsDarkMode] = useState(false);
+    const { theme } = useTheme();
+    const isDarkMode = theme === "dark";
 
     const [sessions, setSessions] = useState<ChatSession[]>([]);
     const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
@@ -337,7 +337,14 @@ export default function AIAdvisorPage() {
                 <Navbar />
 
                 <main className="flex-1 flex overflow-hidden">
+                    {/* Sidebar */}
                     <aside className="w-64 bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 hidden md:flex flex-col p-4 transition-colors">
+                        <div className="flex gap-2 mb-6 shrink-0">
+                            <Button onClick={handleNewChat} className="flex-1 bg-orange-500 hover:bg-orange-600 text-white gap-2">
+                                <Plus className="w-4 h-4" /> Đoạn chat mới
+                            </Button>
+                        </div>
+
                         <div className="shrink-0 mb-4">
                             <div className="relative mb-4">
                                 <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -377,242 +384,259 @@ export default function AIAdvisorPage() {
                         </div>
                     </aside>
 
-                    {/* Chat History */}
+                    {/* Chat Area */}
+                    <div className="flex-1 flex flex-col bg-white md:bg-[#F9FAFB] dark:bg-gray-950 md:dark:bg-gray-900 transition-colors">
 
-                    <div className="flex-1 overflow-y-auto p-4 md:p-8">
-                        <div className="max-w-4xl mx-auto space-y-6 pr-2 md:pr-4 pb-4">
+                        {/* Chat Header (Mobile Only) */}
+                        <div className="md:hidden p-4 border-b dark:border-gray-800 bg-white dark:bg-gray-900 flex items-center justify-between transition-colors">
+                            <span className="font-bold text-gray-700 dark:text-gray-100">Trợ lý Dinh dưỡng AI</span>
+                            <div className="flex items-center gap-1">
+                                <Button size="icon" variant="ghost" className="dark:text-gray-200">
+                                    <Plus className="w-5 h-5" />
+                                </Button>
+                            </div>
+                        </div>
 
+                        {/* Messages */}
+                        <div className="flex-1 overflow-y-auto p-4 md:p-8">
+                            <div className="max-w-4xl mx-auto space-y-6 pr-2 md:pr-4 pb-4">
 
-                            {messages.length === 0 && (
-                                <div className="space-y-8 py-8 animate-in fade-in duration-500">
-                                    <h1 className="text-3xl font-bold text-gray-300 dark:text-gray-600">
-                                        Xin chào! <br />
-                                        <span className="text-gray-400 dark:text-gray-500">Hôm nay tôi có thể giúp gì cho bạn?</span>
-                                    </h1>
+                                {/* Greeting / Empty State */}
+                                {messages.length === 0 && (
+                                    <div className="space-y-8 py-8 animate-in fade-in duration-500">
+                                        <h1 className="text-3xl font-bold text-gray-300 dark:text-gray-600">
+                                            Xin chào! <br />
+                                            <span className="text-gray-400 dark:text-gray-500">Hôm nay tôi có thể giúp gì cho bạn?</span>
+                                        </h1>
 
-                                    <div className="grid md:grid-cols-2 gap-4">
-                                        {[
-                                            { title: "Món chay giàu protein", desc: "Thực đơn thanh đạm, đủ chất" },
-                                            { title: "Thực đơn giảm cân 7 ngày", desc: "Lộ trình ăn uống khoa học" },
-                                            { title: "Tính calo ly trà sữa", desc: "Kèm phân tích lượng đường" },
-                                            { title: "Phân tích bữa ăn", desc: "Tải ảnh lên để tính calo" }
-                                        ].map((card, idx) => (
-                                            <div key={idx} className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-orange-300 dark:hover:border-orange-500 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer group" onClick={() => setInput(card.title)}>
-                                                <h3 className="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">{card.title}</h3>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">{card.desc}</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {messages.map((msg, index) => (
-                                <div key={index} className={`flex gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                                    {msg.role === "assistant" && (
-                                        <div className="w-8 h-8 rounded-full bg-orange-500 flex flex-col items-center justify-center text-white shrink-0 mt-1 shadow-[0_0_15px_rgba(249,115,22,0.4)]">
-                                            <Sparkles className="w-4 h-4" />
-                                        </div>
-                                    )}
-
-                                    <div className={`max-w-[90%] md:max-w-[80%] rounded-2xl px-5 py-4 ${msg.role === "user"
-                                        ? "bg-orange-500 text-white rounded-tr-sm"
-                                        : "bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm rounded-tl-sm"
-                                        }`}>
-                                        {msg.imageUrl && (
-                                            <div className="mb-3">
-                                                <img src={msg.imageUrl} alt="Attached image" className="max-w-xs w-full sm:max-w-[200px] h-auto rounded-lg border border-white/20 shadow-sm" />
-                                            </div>
-                                        )}
-                                        {msg.fileName && (
-                                            <div className="mb-3 inline-flex items-center gap-2 bg-white/10 dark:bg-white/5 border border-white/20 p-2 pr-4 rounded-lg shadow-sm w-fit max-w-full">
-                                                <div className="p-1.5 bg-white/20 rounded-md">
-                                                    <FileText className="w-4 h-4 text-white" />
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+                                            {[
+                                                { title: "Món chay giàu protein", desc: "Thực đơn thanh đạm, đủ chất" },
+                                                { title: "Thực đơn giảm cân 7 ngày", desc: "Lộ trình ăn uống khoa học" },
+                                                { title: "Tính calo ly trà sữa", desc: "Kèm phân tích lượng đường" },
+                                                { title: "Phân tích bữa ăn", desc: "Tải ảnh lên để tính calo" }
+                                            ].map((card, idx) => (
+                                                <div key={idx} className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-orange-300 dark:hover:border-orange-500 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer group" onClick={() => setInput(card.title)}>
+                                                    <h3 className="font-semibold text-sm md:text-base text-gray-800 dark:text-gray-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">{card.title}</h3>
+                                                    <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">{card.desc}</p>
                                                 </div>
-                                                <span className="text-sm font-medium text-white truncate">{msg.fileName}</span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Chat History */}
+                                {messages.map((msg, index) => (
+                                    <div key={index} className={`flex gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                                        {msg.role === "assistant" && (
+                                            <div className="w-8 h-8 rounded-full bg-orange-500 flex flex-col items-center justify-center text-white shrink-0 mt-1 shadow-[0_0_15px_rgba(249,115,22,0.4)]">
+                                                <Sparkles className="w-4 h-4" />
                                             </div>
                                         )}
-                                        <div className={`text-[15px] leading-relaxed ${msg.role === "user" ? "text-white whitespace-pre-wrap" : "text-gray-700 dark:text-gray-300 markdown-content"}`}>
-                                            {msg.role === "assistant" ? (
-                                                <ReactMarkdown
-                                                    remarkPlugins={[remarkGfm]}
-                                                    components={{
-                                                        p: ({ node, ...props }) => <p className="mb-4 last:mb-0" {...props} />,
-                                                        strong: ({ node, ...props }) => <strong className="font-semibold text-gray-900 dark:text-gray-100" {...props} />,
-                                                        ul: ({ node, ...props }) => <ul className="list-disc pl-6 mb-5 space-y-2 marker:text-gray-400 dark:marker:text-gray-500" {...props} />,
-                                                        ol: ({ node, ...props }) => <ol className="list-decimal pl-6 mb-5 space-y-2 marker:text-gray-400 dark:marker:text-gray-500" {...props} />,
-                                                        li: ({ node, ...props }) => <li className="pl-1" {...props} />,
-                                                        h1: ({ node, ...props }) => <h1 className="text-xl font-bold mt-6 mb-4 text-gray-900 dark:text-gray-100" {...props} />,
-                                                        h2: ({ node, ...props }) => <h2 className="text-lg font-bold mt-5 mb-3 text-gray-900 dark:text-gray-100" {...props} />,
-                                                        h3: ({ node, ...props }) => <h3 className="text-base font-bold mt-4 mb-2 text-gray-900 dark:text-gray-100" {...props} />,
-                                                    }}
-                                                >
-                                                    {msg.content}
-                                                </ReactMarkdown>
-                                            ) : (
-                                                <p>{msg.content}</p>
+
+                                        <div className={`max-w-[90%] md:max-w-[80%] rounded-2xl px-5 py-4 ${msg.role === "user"
+                                            ? "bg-orange-500 text-white rounded-tr-sm"
+                                            : "bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm rounded-tl-sm"
+                                            }`}>
+                                            {msg.imageUrl && (
+                                                <div className="mb-3">
+                                                    <img src={msg.imageUrl} alt="Attached image" className="max-w-xs w-full sm:max-w-[200px] h-auto rounded-lg border border-white/20 shadow-sm" />
+                                                </div>
+                                            )}
+                                            {msg.fileName && (
+                                                <div className="mb-3 inline-flex items-center gap-2 bg-white/10 dark:bg-white/5 border border-white/20 p-2 pr-4 rounded-lg shadow-sm w-fit max-w-full">
+                                                    <div className="p-1.5 bg-white/20 rounded-md">
+                                                        <FileText className="w-4 h-4 text-white" />
+                                                    </div>
+                                                    <span className="text-sm font-medium text-white truncate">{msg.fileName}</span>
+                                                </div>
+                                            )}
+                                            <div className={`text-[15px] leading-relaxed ${msg.role === "user" ? "text-white whitespace-pre-wrap" : "text-gray-700 dark:text-gray-300 markdown-content"}`}>
+                                                {msg.role === "assistant" ? (
+                                                    <ReactMarkdown
+                                                        remarkPlugins={[remarkGfm]}
+                                                        components={{
+                                                            p: ({ node, ...props }) => <p className="mb-4 last:mb-0" {...props} />,
+                                                            strong: ({ node, ...props }) => <strong className="font-semibold text-gray-900 dark:text-gray-100" {...props} />,
+                                                            ul: ({ node, ...props }) => <ul className="list-disc pl-6 mb-5 space-y-2 marker:text-gray-400 dark:marker:text-gray-500" {...props} />,
+                                                            ol: ({ node, ...props }) => <ol className="list-decimal pl-6 mb-5 space-y-2 marker:text-gray-400 dark:marker:text-gray-500" {...props} />,
+                                                            li: ({ node, ...props }) => <li className="pl-1" {...props} />,
+                                                            h1: ({ node, ...props }) => <h1 className="text-xl font-bold mt-6 mb-4 text-gray-900 dark:text-gray-100" {...props} />,
+                                                            h2: ({ node, ...props }) => <h2 className="text-lg font-bold mt-5 mb-3 text-gray-900 dark:text-gray-100" {...props} />,
+                                                            h3: ({ node, ...props }) => <h3 className="text-base font-bold mt-4 mb-2 text-gray-900 dark:text-gray-100" {...props} />,
+                                                        }}
+                                                    >
+                                                        {msg.content}
+                                                    </ReactMarkdown>
+                                                ) : (
+                                                    <p>{msg.content}</p>
+                                                )}
+                                            </div>
+
+                                            {/* Interaction Buttons for AI Response */}
+                                            {msg.role === "assistant" && (
+                                                <div className="flex items-center gap-2 mt-4 pt-2 border-t border-gray-50 dark:border-gray-700/50">
+                                                    <button
+                                                        onClick={() => handleFeedback(index, 'helpful')}
+                                                        className={`group overflow-hidden flex items-center gap-1.5 text-xs px-2 py-1 rounded-md transition-all active:scale-95 ${feedback[index] === 'helpful' ? 'text-green-600 bg-green-100 dark:bg-green-900/30 dark:text-green-400' : 'text-gray-400 dark:text-gray-500 hover:text-green-600 dark:hover:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20'}`}>
+                                                        <div className="flex items-center gap-1 z-10 bg-inherit rounded-full">
+                                                            <ThumbsUp className={`w-3.5 h-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-110 group-active:scale-90 ${feedback[index] === 'helpful' ? 'fill-current' : ''}`} />
+                                                            {feedback[index] === 'helpful' && <span className="font-semibold">1</span>}
+                                                        </div>
+                                                        <span className="inline-block transition-transform duration-300 origin-left group-hover:scale-105 group-hover:translate-x-0.5 group-hover:font-medium">Hữu ích</span>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleFeedback(index, 'not_helpful')}
+                                                        className={`group overflow-hidden flex items-center gap-1.5 text-xs px-2 py-1 rounded-md transition-all active:scale-95 ${feedback[index] === 'not_helpful' ? 'text-red-600 bg-red-100 dark:bg-red-900/30 dark:text-red-400' : 'text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20'}`}>
+                                                        <div className="flex items-center gap-1 z-10 bg-inherit rounded-full">
+                                                            <ThumbsDown className={`w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-y-0.5 group-hover:scale-110 group-active:scale-90 ${feedback[index] === 'not_helpful' ? 'fill-current' : ''}`} />
+                                                            {feedback[index] === 'not_helpful' && <span className="font-semibold">1</span>}
+                                                        </div>
+                                                        <span className="inline-block transition-transform duration-300 origin-left group-hover:scale-105 group-hover:translate-x-0.5 group-hover:font-medium">Không hữu ích</span>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleRegenerate(index)}
+                                                        disabled={isLoading}
+                                                        className="group overflow-hidden flex items-center gap-1.5 text-xs text-gray-400 dark:text-gray-500 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20 active:scale-95 transition-all px-2 py-1 rounded-md ml-auto disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+                                                        <div className="flex items-center gap-1 z-10 bg-inherit rounded-full">
+                                                            <RotateCcw className={`w-3.5 h-3.5 transition-transform duration-500 ${isLoading ? '' : 'group-hover:-rotate-180 group-hover:scale-110 group-active:-rotate-90'}`} />
+                                                        </div>
+                                                        <span className="inline-block transition-transform duration-300 origin-left group-hover:scale-105 group-hover:translate-x-0.5 group-hover:font-medium">Tạo lại phản hồi</span>
+                                                    </button>
+                                                </div>
                                             )}
                                         </div>
 
-                                        {msg.role === "assistant" && (
-                                            <div className="flex items-center gap-2 mt-4 pt-2 border-t border-gray-50 dark:border-gray-700/50">
-                                                <button
-                                                    onClick={() => handleFeedback(index, 'helpful')}
-                                                    className={`group overflow-hidden flex items-center gap-1.5 text-xs px-2 py-1 rounded-md transition-all active:scale-95 ${feedback[index] === 'helpful' ? 'text-green-600 bg-green-100 dark:bg-green-900/30 dark:text-green-400' : 'text-gray-400 dark:text-gray-500 hover:text-green-600 dark:hover:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20'}`}>
-                                                    <div className="flex items-center gap-1 z-10 bg-inherit rounded-full">
-                                                        <ThumbsUp className={`w-3.5 h-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-110 group-active:scale-90 ${feedback[index] === 'helpful' ? 'fill-current' : ''}`} />
-                                                        {feedback[index] === 'helpful' && <span className="font-semibold">1</span>}
-                                                    </div>
-                                                    <span className="inline-block transition-transform duration-300 origin-left group-hover:scale-105 group-hover:translate-x-0.5 group-hover:font-medium">Hữu ích</span>
-                                                </button>
-                                                <button
-                                                    onClick={() => handleFeedback(index, 'not_helpful')}
-                                                    className={`group overflow-hidden flex items-center gap-1.5 text-xs px-2 py-1 rounded-md transition-all active:scale-95 ${feedback[index] === 'not_helpful' ? 'text-red-600 bg-red-100 dark:bg-red-900/30 dark:text-red-400' : 'text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20'}`}>
-                                                    <div className="flex items-center gap-1 z-10 bg-inherit rounded-full">
-                                                        <ThumbsDown className={`w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-y-0.5 group-hover:scale-110 group-active:scale-90 ${feedback[index] === 'not_helpful' ? 'fill-current' : ''}`} />
-                                                        {feedback[index] === 'not_helpful' && <span className="font-semibold">1</span>}
-                                                    </div>
-                                                    <span className="inline-block transition-transform duration-300 origin-left group-hover:scale-105 group-hover:translate-x-0.5 group-hover:font-medium">Không hữu ích</span>
-                                                </button>
-                                                <button
-                                                    onClick={() => handleRegenerate(index)}
-                                                    disabled={isLoading}
-                                                    className="group overflow-hidden flex items-center gap-1.5 text-xs text-gray-400 dark:text-gray-500 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20 active:scale-95 transition-all px-2 py-1 rounded-md ml-auto disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
-                                                    <div className="flex items-center gap-1 z-10 bg-inherit rounded-full">
-                                                        <RotateCcw className={`w-3.5 h-3.5 transition-transform duration-500 ${isLoading ? '' : 'group-hover:-rotate-180 group-hover:scale-110 group-active:-rotate-90'}`} />
-                                                    </div>
-                                                    <span className="inline-block transition-transform duration-300 origin-left group-hover:scale-105 group-hover:translate-x-0.5 group-hover:font-medium">Tạo lại</span>
-                                                </button>
-                                            </div>
+                                        {msg.role === "user" && (
+                                            <Avatar className="w-8 h-8 mt-1 border-2 border-white dark:border-transparent shadow-sm">
+                                                <AvatarImage src="/avatar-user.png" />
+                                                <AvatarFallback className="bg-blue-100 text-blue-600 text-xs font-bold">Tôi</AvatarFallback>
+                                            </Avatar>
                                         )}
                                     </div>
+                                ))}
 
-                                    {msg.role === "user" && (
-                                        <Avatar className="w-8 h-8 mt-1 border-2 border-white dark:border-transparent shadow-sm">
-                                            <AvatarImage src="/avatar-user.png" />
-                                            <AvatarFallback className="bg-blue-100 text-blue-600 text-xs font-bold">Tôi</AvatarFallback>
-                                        </Avatar>
+                                {isLoading && (
+                                    <div className="flex gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                                        <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white shrink-0 shadow-[0_0_15px_rgba(249,115,22,0.4)]">
+                                            <Sparkles className="w-4 h-4 animate-pulse relative z-10" />
+                                        </div>
+                                        <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm rounded-2xl rounded-tl-sm p-4 w-24 flex items-center justify-center gap-1">
+                                            <span className="w-2 h-2 bg-orange-300 dark:bg-orange-600 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                                            <span className="w-2 h-2 bg-orange-400 dark:bg-orange-500 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                                            <span className="w-2 h-2 bg-orange-500 dark:bg-orange-400 rounded-full animate-bounce"></span>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div ref={scrollRef} />
+                            </div>
+                        </div>
+
+                        {/* Input Area */}
+                        <div className="p-4 md:p-6 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 transition-colors">
+                            <div className="max-w-4xl mx-auto">
+                                {/* Quick Actions */}
+                                {messages.length > 0 && !isLoading && (
+                                    <div className="flex gap-2 overflow-x-auto pb-3 no-scrollbar mask-gradient">
+                                        {["Món chay giàu protein", "Lên thực đơn giảm cân 7 ngày", "Tính calo ly trà sữa"].map((chip) => (
+                                            <button
+                                                key={chip}
+                                                onClick={() => {
+                                                    setInput(chip);
+                                                }}
+                                                className="whitespace-nowrap px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-orange-300 dark:hover:border-orange-500 hover:bg-orange-50 dark:hover:bg-gray-700 hover:text-orange-600 dark:hover:text-orange-400 hover:scale-[1.02] active:scale-95 text-gray-600 dark:text-gray-300 text-sm rounded-full transition-all shadow-sm"
+                                            >
+                                                {chip}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+
+                                <div className="flex flex-wrap gap-3">
+                                    {selectedImage && (
+                                        <div className="mb-3 relative inline-block animate-in fade-in zoom-in duration-200">
+                                            <img src={selectedImage} alt="Selected" className="h-20 w-auto rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm" />
+                                            <button
+                                                onClick={handleRemoveImage}
+                                                className="absolute -top-2 -right-2 bg-white dark:bg-gray-800 rounded-full p-1 shadow-md border border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
+                                            >
+                                                <X className="w-3 h-3" />
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    {selectedFile && (
+                                        <div className="mb-3 relative inline-flex items-center gap-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-2 pr-8 rounded-lg shadow-sm animate-in fade-in zoom-in duration-200 max-w-sm">
+                                            <div className="p-2 bg-white dark:bg-gray-900 rounded-md border border-gray-100 dark:border-gray-700">
+                                                <FileText className="w-5 h-5 text-blue-500" />
+                                            </div>
+                                            <div className="flex flex-col truncate">
+                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate">{selectedFile.name}</span>
+                                                <span className="text-xs text-gray-400 dark:text-gray-500">{(selectedFile.size / 1024).toFixed(1)} KB</span>
+                                            </div>
+                                            <button
+                                                onClick={handleRemoveFile}
+                                                className="absolute -top-2 -right-2 bg-white dark:bg-gray-800 rounded-full p-1 shadow-md border border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
+                                            >
+                                                <X className="w-3 h-3" />
+                                            </button>
+                                        </div>
                                     )}
                                 </div>
-                            ))}
 
-                            {isLoading && (
-                                <div className="flex gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                    <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white shrink-0 shadow-[0_0_15px_rgba(249,115,22,0.4)]">
-                                        <Sparkles className="w-4 h-4 animate-pulse relative z-10" />
-                                    </div>
-                                    <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm rounded-2xl rounded-tl-sm p-4 w-24 flex items-center justify-center gap-1">
-                                        <span className="w-2 h-2 bg-orange-300 dark:bg-orange-600 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                                        <span className="w-2 h-2 bg-orange-400 dark:bg-orange-500 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                                        <span className="w-2 h-2 bg-orange-500 dark:bg-orange-400 rounded-full animate-bounce"></span>
-                                    </div>
+                                <div className="relative flex items-end gap-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-3xl p-2 focus-within:ring-2 focus-within:ring-orange-100 dark:focus-within:ring-orange-900/30 focus-within:border-orange-300 dark:focus-within:border-orange-500/50 transition-all">
+                                    <input type="file" className="hidden" ref={generalFileInputRef} onChange={handleFileSelect} />
+                                    <Button
+                                        onClick={() => generalFileInputRef.current?.click()}
+                                        size="icon"
+                                        variant="ghost"
+                                        className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full h-10 w-10 shrink-0 transition-colors"
+                                    >
+                                        <Paperclip className="w-5 h-5" />
+                                    </Button>
+
+                                    <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageSelect} />
+                                    <Button
+                                        onClick={() => fileInputRef.current?.click()}
+                                        size="icon"
+                                        variant="ghost"
+                                        className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full h-10 w-10 shrink-0 transition-colors -ml-1"
+                                    >
+                                        <ImageIcon className="w-5 h-5" />
+                                    </Button>
+                                    <textarea
+                                        value={input}
+                                        onChange={(e) => setInput(e.target.value)}
+                                        onKeyDown={handleKeyDown}
+                                        placeholder={isRecording ? "Đang nghe..." : "Hỏi về thực đơn, lượng calo, công thức nấu ăn..."}
+                                        className={`flex-1 bg-transparent border-none focus:ring-0 focus:outline-none outline-none resize-none max-h-32 py-2.5 text-gray-700 dark:text-gray-200 ${isRecording ? 'placeholder:text-red-400' : 'placeholder:text-gray-400 dark:placeholder:text-gray-500'}`}
+                                        rows={1}
+                                        style={{ height: 'auto', minHeight: '44px' }}
+                                    />
+                                    <Button
+                                        onClick={toggleRecording}
+                                        size="icon"
+                                        variant="ghost"
+                                        className={`rounded-full h-10 w-10 shrink-0 transition-all ${isRecording ? 'text-orange-500 bg-orange-50 dark:bg-orange-900/20 hover:bg-orange-100 dark:hover:bg-orange-900/40 animate-pulse' : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+                                    >
+                                        <Mic className={`w-5 h-5 ${isRecording ? 'scale-110' : ''}`} />
+                                    </Button>
+                                    <Button
+                                        onClick={handleSend}
+                                        disabled={(!input.trim() && !selectedImage && !selectedFile) || isLoading}
+                                        size="icon"
+                                        className={`rounded-full h-10 w-10 shrink-0 transition-all duration-300 ease-out ${input.trim() || selectedImage || selectedFile
+                                            ? "bg-orange-500 hover:bg-orange-600 text-white shadow-[0_4px_14px_0_rgba(249,115,22,0.39)] hover:shadow-[0_6px_20px_rgba(249,115,22,0.23)] hover:-translate-y-0.5"
+                                            : "bg-transparent dark:bg-transparent text-gray-400 dark:text-gray-600"
+                                            }`}
+                                    >
+                                        <Send className="w-5 h-5 ml-0.5" />
+                                    </Button>
                                 </div>
-                            )}
-
-                            <div ref={scrollRef} />
-                        </div>
-                    </div>
-
-                    <div className="p-4 md:p-6 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 transition-colors">
-                        <div className="max-w-4xl mx-auto">
-                            {messages.length > 0 && !isLoading && (
-                                <div className="flex gap-2 overflow-x-auto pb-3 no-scrollbar mask-gradient">
-                                    {["Món chay giàu protein", "Lên thực đơn giảm cân 7 ngày", "Tính calo ly trà sữa"].map((chip) => (
-                                        <button
-                                            key={chip}
-                                            onClick={() => {
-                                                setInput(chip);
-                                            }}
-                                            className="whitespace-nowrap px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-orange-300 dark:hover:border-orange-500 hover:bg-orange-50 dark:hover:bg-gray-700 hover:text-orange-600 dark:hover:text-orange-400 hover:scale-[1.02] active:scale-95 text-gray-600 dark:text-gray-300 text-sm rounded-full transition-all shadow-sm"
-                                        >
-                                            {chip}
-                                        </button>
-                                    ))}
+                                <div className="text-center mt-3">
+                                    <p className="text-[11px] text-gray-500 dark:text-gray-400">SmartBite AI có thể hiển thị thông tin không chính xác, vui lòng kiểm tra lại các thông số dinh dưỡng quan trọng.</p>
                                 </div>
-                            )}
-
-                            <div className="flex flex-wrap gap-3">
-                                {selectedImage && (
-                                    <div className="mb-3 relative inline-block animate-in fade-in zoom-in duration-200">
-                                        <img src={selectedImage} alt="Selected" className="h-20 w-auto rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm" />
-                                        <button
-                                            onClick={handleRemoveImage}
-                                            className="absolute -top-2 -right-2 bg-white dark:bg-gray-800 rounded-full p-1 shadow-md border border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
-                                        >
-                                            <X className="w-3 h-3" />
-                                        </button>
-                                    </div>
-                                )}
-
-                                {selectedFile && (
-                                    <div className="mb-3 relative inline-flex items-center gap-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-2 pr-8 rounded-lg shadow-sm animate-in fade-in zoom-in duration-200 max-w-sm">
-                                        <div className="p-2 bg-white dark:bg-gray-900 rounded-md border border-gray-100 dark:border-gray-700">
-                                            <FileText className="w-5 h-5 text-blue-500" />
-                                        </div>
-                                        <div className="flex flex-col truncate">
-                                            <span className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate">{selectedFile.name}</span>
-                                            <span className="text-xs text-gray-400 dark:text-gray-500">{(selectedFile.size / 1024).toFixed(1)} KB</span>
-                                        </div>
-                                        <button
-                                            onClick={handleRemoveFile}
-                                            className="absolute -top-2 -right-2 bg-white dark:bg-gray-800 rounded-full p-1 shadow-md border border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
-                                        >
-                                            <X className="w-3 h-3" />
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className="relative flex items-end gap-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-3xl p-2 focus-within:ring-2 focus-within:ring-orange-100 dark:focus-within:ring-orange-900/30 focus-within:border-orange-300 dark:focus-within:border-orange-500/50 transition-all">
-                                <input type="file" className="hidden" ref={generalFileInputRef} onChange={handleFileSelect} />
-                                <Button
-                                    onClick={() => generalFileInputRef.current?.click()}
-                                    size="icon"
-                                    variant="ghost"
-                                    className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full h-10 w-10 shrink-0 transition-colors"
-                                >
-                                    <Paperclip className="w-5 h-5" />
-                                </Button>
-
-                                <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageSelect} />
-                                <Button
-                                    onClick={() => fileInputRef.current?.click()}
-                                    size="icon"
-                                    variant="ghost"
-                                    className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full h-10 w-10 shrink-0 transition-colors -ml-1"
-                                >
-                                    <ImageIcon className="w-5 h-5" />
-                                </Button>
-                                <textarea
-                                    value={input}
-                                    onChange={(e) => setInput(e.target.value)}
-                                    onKeyDown={handleKeyDown}
-                                    placeholder={isRecording ? "Đang nghe..." : "Hỏi về thực đơn, lượng calo, công thức nấu ăn..."}
-                                    className={`flex-1 bg-transparent border-none focus:ring-0 focus:outline-none outline-none resize-none max-h-32 py-2.5 text-gray-700 dark:text-gray-200 ${isRecording ? 'placeholder:text-red-400' : 'placeholder:text-gray-400 dark:placeholder:text-gray-500'}`}
-                                    rows={1}
-                                    style={{ height: 'auto', minHeight: '44px' }}
-                                />
-                                <Button
-                                    onClick={toggleRecording}
-                                    size="icon"
-                                    variant="ghost"
-                                    className={`rounded-full h-10 w-10 shrink-0 transition-all ${isRecording ? 'text-orange-500 bg-orange-50 dark:bg-orange-900/20 hover:bg-orange-100 dark:hover:bg-orange-900/40 animate-pulse' : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
-                                >
-                                    <Mic className={`w-5 h-5 ${isRecording ? 'scale-110' : ''}`} />
-                                </Button>
-                                <Button
-                                    onClick={handleSend}
-                                    disabled={(!input.trim() && !selectedImage && !selectedFile) || isLoading}
-                                    size="icon"
-                                    className={`rounded-full h-10 w-10 shrink-0 transition-all duration-300 ease-out ${input.trim() || selectedImage || selectedFile
-                                        ? "bg-orange-500 hover:bg-orange-600 text-white shadow-[0_4px_14px_0_rgba(249,115,22,0.39)] hover:shadow-[0_6px_20px_rgba(249,115,22,0.23)] hover:-translate-y-0.5"
-                                        : "bg-transparent dark:bg-transparent text-gray-400 dark:text-gray-600"
-                                        }`}
-                                >
-                                    <Send className="w-5 h-5 ml-0.5" />
-                                </Button>
-                            </div>
-                            <div className="text-center mt-3">
-                                <p className="text-[11px] text-gray-500 dark:text-gray-400">SmartBite AI có thể hiển thị thông tin không chính xác, vui lòng kiểm tra lại các thông tin dinh dưỡng quan trọng.</p>
                             </div>
                         </div>
                     </div>

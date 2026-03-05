@@ -45,71 +45,71 @@ export default function Reports() {
         <div className="space-y-8 max-w-6xl mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Báo cáo kinh doanh</h1>
-                    <p className="text-gray-500 mt-1">Tổng quan về hiệu suất kinh doanh của bạn</p>
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Báo cáo kinh doanh</h1>
+                    <p className="text-gray-500 dark:text-gray-400 mt-1">Tổng quan về hiệu suất kinh doanh của bạn</p>
                 </div>
-                <div className="bg-white px-4 py-2 rounded-xl border border-gray-100 flex items-center gap-2 shadow-sm">
+                <div className="bg-white dark:bg-gray-800 px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-700 flex items-center gap-2 shadow-sm">
                     <Calendar className="w-4 h-4 text-gray-400" />
-                    <span className="text-sm font-medium text-gray-600">Tổng quan mọi thời điểm</span>
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Tổng quan mọi thời điểm</span>
                 </div>
             </div>
 
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-gray-800/50 shadow-sm flex flex-col justify-between">
                     <div className="flex justify-between items-start mb-4">
-                        <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-orange-500">
+                        <div className="w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center text-orange-500">
                             <DollarSign className="w-6 h-6" />
                         </div>
                     </div>
                     <div>
-                        <p className="text-sm font-medium text-gray-500 mb-1">Tổng doanh thu</p>
-                        <h3 className="text-2xl font-bold text-gray-900">{formatPrice(stats?.totalRevenue || 0)}</h3>
+                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Tổng doanh thu</p>
+                        <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{formatPrice(stats?.totalRevenue || 0)}</h3>
                     </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-gray-800/50 shadow-sm flex flex-col justify-between">
                     <div className="flex justify-between items-start mb-4">
-                        <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500">
+                        <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-500">
                             <ShoppingBag className="w-6 h-6" />
                         </div>
                     </div>
                     <div>
-                        <p className="text-sm font-medium text-gray-500 mb-1">Tổng đơn hàng</p>
-                        <h3 className="text-2xl font-bold text-gray-900">{stats?.totalOrders || 0}</h3>
+                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Tổng đơn hàng</p>
+                        <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats?.totalOrders || 0}</h3>
                     </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-gray-800/50 shadow-sm flex flex-col justify-between">
                     <div className="flex justify-between items-start mb-4">
-                        <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-green-500">
+                        <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-900/20 flex items-center justify-center text-green-500">
                             <TrendingUp className="w-6 h-6" />
                         </div>
                     </div>
                     <div>
-                        <p className="text-sm font-medium text-gray-500 mb-1">Giá trị đơn hàng trung bình</p>
-                        <h3 className="text-2xl font-bold text-gray-900">{formatPrice(stats?.averageOrderValue || 0)}</h3>
+                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Giá trị đơn hàng trung bình</p>
+                        <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{formatPrice(stats?.averageOrderValue || 0)}</h3>
                     </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-gray-800/50 shadow-sm flex flex-col justify-between">
                     <div className="flex justify-between items-start mb-4">
-                        <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center text-purple-500">
+                        <div className="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center text-purple-500">
                             <Users className="w-6 h-6" />
                         </div>
                     </div>
                     <div>
-                        <p className="text-sm font-medium text-gray-500 mb-1">Tổng khách hàng</p>
-                        <h3 className="text-2xl font-bold text-gray-900">{stats?.totalCustomers || 0}</h3>
+                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Tổng khách hàng</p>
+                        <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats?.totalCustomers || 0}</h3>
                     </div>
                 </div>
             </div>
 
 
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm">
                 <div className="flex items-center gap-2 mb-6">
-                    <BarChart3 className="w-5 h-5 text-gray-500" />
-                    <h3 className="font-bold text-gray-900 text-lg">Xu hướng doanh thu (Ngày hoạt động gần nhất)</h3>
+                    <BarChart3 className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                    <h3 className="font-bold text-gray-900 dark:text-gray-100 text-lg">Xu hướng doanh thu (Ngày hoạt động gần nhất)</h3>
                 </div>
                 <div className="h-80 w-full">
                     {stats?.salesTrend && stats.salesTrend.length > 0 ? (
@@ -121,7 +121,7 @@ export default function Reports() {
                                         <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#374151" opacity={0.3} />
                                 <XAxis
                                     dataKey="date"
                                     tickFormatter={(tick) => new Date(tick).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' })}
@@ -140,7 +140,14 @@ export default function Reports() {
                                 <Tooltip
                                     formatter={(value: any) => [formatPrice(Number(value) || 0), 'Doanh thu']}
                                     labelFormatter={(label) => new Date(label).toLocaleDateString('vi-VN')}
-                                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                    contentStyle={{
+                                        borderRadius: '12px',
+                                        border: 'none',
+                                        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                                        backgroundColor: '#111827',
+                                        color: '#f9fafb'
+                                    }}
+                                    itemStyle={{ color: '#f97316' }}
                                 />
                                 <Area
                                     type="monotone"

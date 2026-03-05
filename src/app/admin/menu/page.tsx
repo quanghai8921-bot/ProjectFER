@@ -141,6 +141,7 @@ export default function MenuManagement() {
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
     const [uploadError, setUploadError] = useState("")
     const [editingDishId, setEditingDishId] = useState<string | null>(null)
+    const [searchTerm, setSearchTerm] = useState("")
 
     const supabase = createClient()
 
@@ -347,17 +348,21 @@ export default function MenuManagement() {
         await handleUpdateStatus(id, 'Không có sẵn');
     }
 
+    const filteredDishes = dishes.filter(dish =>
+        dish.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900">Quản lý Thực đơn</h1>
-                    <p className="text-gray-500">Quản lý các món ăn trong nhà hàng của bạn</p>
+                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Quản lý Thực đơn</h1>
+                    <p className="text-gray-500 dark:text-gray-400">Quản lý các món ăn trong nhà hàng của bạn</p>
                 </div>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
                         <Button
-                            className="bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-200"
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-xl transition-all shadow-lg shadow-orange-200 dark:shadow-none font-bold group"
                             onClick={() => {
                                 setNewDish(DEFAULT_DISH);
                                 setEditingDishId(null);
@@ -366,7 +371,7 @@ export default function MenuManagement() {
                             <Plus className="mr-2 h-4 w-4" /> Thêm món mới
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[700px] overflow-y-auto max-h-[90vh]">
+                    <DialogContent className="sm:max-w-[700px] overflow-y-auto max-h-[90vh] dark:bg-gray-950 dark:border-gray-800">
                         <DialogHeader>
                             <DialogTitle>{editingDishId ? "Chỉnh sửa món ăn" : "Thêm món mới"}</DialogTitle>
                             <DialogDescription>
@@ -376,29 +381,29 @@ export default function MenuManagement() {
                         <form onSubmit={handleSubmit} className="grid gap-6 py-4">
 
                             <div className="grid gap-4">
-                                <h3 className="font-semibold text-gray-900 border-b pb-2">Thông tin cơ bản</h3>
+                                <h3 className="font-semibold text-gray-900 dark:text-gray-100 border-b dark:border-gray-800 pb-2">Thông tin cơ bản</h3>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="title">Tên món ăn</Label>
-                                    <Input id="title" name="title" value={newDish.title} onChange={handleInputChange} required />
+                                    <Label htmlFor="title" className="dark:text-gray-300">Tên món ăn</Label>
+                                    <Input id="title" name="title" value={newDish.title} onChange={handleInputChange} className="dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100" required />
                                 </div>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="desc">Mô tả</Label>
-                                    <Input id="desc" name="desc" value={newDish.desc} onChange={handleInputChange} required />
+                                    <Label htmlFor="desc" className="dark:text-gray-300">Mô tả</Label>
+                                    <Input id="desc" name="desc" value={newDish.desc} onChange={handleInputChange} className="dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100" required />
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="grid gap-2">
-                                        <Label htmlFor="price">Giá</Label>
-                                        <Input id="price" name="price" value={newDish.price} onChange={handleInputChange} placeholder="v.d. 50.000 đ" required />
+                                        <Label htmlFor="price" className="dark:text-gray-300">Giá</Label>
+                                        <Input id="price" name="price" value={newDish.price} onChange={handleInputChange} placeholder="v.d. 50.000 đ" className="dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100" required />
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="time">Thời gian chuẩn bị</Label>
-                                        <Input id="time" name="time" value={newDish.time} onChange={handleInputChange} placeholder="v.d. 15-20 phút" required />
+                                        <Label htmlFor="time" className="dark:text-gray-300">Thời gian chuẩn bị</Label>
+                                        <Input id="time" name="time" value={newDish.time} onChange={handleInputChange} placeholder="v.d. 15-20 phút" className="dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100" required />
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="grid gap-2">
-                                        <Label htmlFor="calories">Calories</Label>
-                                        <Input id="calories" name="calories" value={newDish.calories} onChange={handleInputChange} placeholder="v.d. 450 kcal" required />
+                                        <Label htmlFor="calories" className="dark:text-gray-300">Calories</Label>
+                                        <Input id="calories" name="calories" value={newDish.calories} onChange={handleInputChange} placeholder="v.d. 450 kcal" className="dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100" required />
                                     </div>
                                     <div className="grid gap-2">
                                         <Label htmlFor="image">Hình ảnh món ăn</Label>
@@ -441,8 +446,8 @@ export default function MenuManagement() {
                                                             setNewDish(prev => ({ ...prev, categories: updated }))
                                                         }}
                                                         className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${isSelected
-                                                            ? 'bg-orange-50 border-orange-500 text-orange-700'
-                                                            : 'bg-white border-gray-100 text-gray-600 hover:bg-gray-50'
+                                                            ? 'bg-orange-50 dark:bg-orange-900/30 border-orange-500 text-orange-700 dark:text-orange-300'
+                                                            : 'bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
                                                             }`}
                                                     >
                                                         <Icon className={`h-5 w-5 ${isSelected ? 'text-orange-500' : 'text-gray-400'}`} />
@@ -514,7 +519,7 @@ export default function MenuManagement() {
                                     <Label className="text-base font-semibold">Chế độ ăn</Label>
                                     <div className="flex flex-wrap gap-2">
                                         {DIETS.map(diet => (
-                                            <div key={diet} className="flex items-center space-x-2 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
+                                            <div key={diet} className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-800 px-3 py-1.5 rounded-full border border-gray-100 dark:border-gray-700">
                                                 <Checkbox
                                                     id={`diet-${diet}`}
                                                     checked={newDish.diets?.includes(diet)}
@@ -542,7 +547,7 @@ export default function MenuManagement() {
                                     <Label className="text-base font-semibold">Dị ứng thực phẩm</Label>
                                     <div className="flex flex-wrap gap-2">
                                         {ALLERGIES.map(allergy => (
-                                            <div key={allergy} className="flex items-center space-x-2 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
+                                            <div key={allergy} className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-800 px-3 py-1.5 rounded-full border border-gray-100 dark:border-gray-700">
                                                 <Checkbox
                                                     id={`allergy-${allergy}`}
                                                     checked={newDish.allergies?.includes(allergy)}
@@ -566,7 +571,7 @@ export default function MenuManagement() {
                                     <Label className="text-base font-semibold">Hương vị</Label>
                                     <div className="flex flex-wrap gap-2">
                                         {FLAVORS.map(flavor => (
-                                            <div key={flavor} className="flex items-center space-x-2 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
+                                            <div key={flavor} className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-800 px-3 py-1.5 rounded-full border border-gray-100 dark:border-gray-700">
                                                 <Checkbox
                                                     id={`flavor-${flavor}`}
                                                     checked={newDish.flavors?.includes(flavor)}
@@ -579,7 +584,7 @@ export default function MenuManagement() {
                                                     }}
                                                     className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500 rounded-full"
                                                 />
-                                                <label htmlFor={`flavor-${flavor}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
+                                                <label htmlFor={`flavor-${flavor}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer dark:text-gray-300">
                                                     {flavor}
                                                 </label>
                                             </div>
@@ -590,22 +595,22 @@ export default function MenuManagement() {
 
 
                             <div className="grid gap-4">
-                                <h3 className="font-semibold text-gray-900 border-b pb-2 flex items-center gap-2">
+                                <h3 className="font-semibold text-gray-900 dark:text-gray-100 border-b dark:border-gray-800 pb-2 flex items-center gap-2">
                                     SmartBite AI đánh giá
-                                    <span className="text-xs font-normal text-orange-500 bg-orange-50 px-2 py-0.5 rounded-full">Tự động</span>
+                                    <span className="text-xs font-normal text-orange-500 bg-orange-50 dark:bg-orange-900/40 px-2 py-0.5 rounded-full">Tự động</span>
                                 </h3>
                                 <div className="space-y-2">
                                     <Label>Dinh dưỡng</Label>
                                     <div className="flex flex-wrap gap-2">
                                         {PREDEFINED_TAGS.map(tag => (
-                                            <div key={tag} className="flex items-center space-x-2 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
+                                            <div key={tag} className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-900 px-3 py-1.5 rounded-full border border-gray-100 dark:border-gray-800">
                                                 <Checkbox
                                                     id={`tag-${tag}`}
                                                     checked={newDish.aiReview?.tags?.includes(tag)}
                                                     onCheckedChange={() => toggleTag(tag)}
                                                     className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
                                                 />
-                                                <label htmlFor={`tag-${tag}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
+                                                <label htmlFor={`tag-${tag}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer dark:text-gray-300">
                                                     {tag}
                                                 </label>
                                             </div>
@@ -616,7 +621,7 @@ export default function MenuManagement() {
                                     <Label htmlFor="aiSummary">Tóm tắt AI</Label>
                                     <textarea
                                         id="aiSummary"
-                                        className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        className="flex min-h-[80px] w-full rounded-md border border-input bg-background dark:bg-gray-900 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:text-gray-100"
                                         value={newDish.aiReview?.summary}
                                         onChange={(e) => handleAiReviewChange('summary', e.target.value)}
                                         placeholder="Mô tả đánh giá từ AI..."
@@ -627,17 +632,17 @@ export default function MenuManagement() {
 
                             <div className="grid gap-4">
                                 <div className="flex items-center justify-between border-b pb-2">
-                                    <h3 className="font-semibold text-gray-900">Nguyên liệu chính</h3>
-                                    <Button type="button" variant="outline" size="sm" onClick={addIngredient} className="text-orange-600 border-orange-200 hover:bg-orange-50">
+                                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">Nguyên liệu chính</h3>
+                                    <Button type="button" variant="outline" size="sm" onClick={addIngredient} className="text-orange-600 border-orange-200 dark:border-orange-900/50 hover:bg-orange-50 dark:hover:bg-orange-900/20">
                                         <Plus className="h-3 w-3 mr-1" /> Thêm
                                     </Button>
                                 </div>
                                 {newDish.ingredients?.map((ing, idx) => (
-                                    <div key={idx} className="flex gap-3 items-end p-3 bg-gray-50 rounded-lg relative group">
+                                    <div key={idx} className="flex gap-3 items-end p-3 bg-gray-50 dark:bg-gray-900 rounded-lg relative group border border-transparent dark:border-gray-800">
                                         <div className="flex-1 space-y-1">
                                             <Label className="text-xs">Biểu tượng</Label>
                                             <select
-                                                className="w-full h-9 rounded-md border border-input bg-white px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                                className="w-full h-9 rounded-md border border-input bg-white dark:bg-gray-900 dark:border-gray-700 px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:text-gray-100"
                                                 value={ing.icon}
                                                 onChange={(e) => updateIngredient(idx, 'icon', e.target.value)}
                                             >
@@ -648,11 +653,11 @@ export default function MenuManagement() {
                                         </div>
                                         <div className="flex-[2] space-y-1">
                                             <Label className="text-xs">Tên</Label>
-                                            <Input value={ing.name} onChange={(e) => updateIngredient(idx, 'name', e.target.value)} placeholder="v.d. Cơm trắng" className="h-9 bg-white" />
+                                            <Input value={ing.name} onChange={(e) => updateIngredient(idx, 'name', e.target.value)} placeholder="v.d. Cơm trắng" className="h-9 bg-white dark:bg-gray-900 dark:border-gray-700" />
                                         </div>
                                         <div className="flex-1 space-y-1">
                                             <Label className="text-xs">Số lượng</Label>
-                                            <Input value={ing.amount} onChange={(e) => updateIngredient(idx, 'amount', e.target.value)} placeholder="150g" className="h-9 bg-white" />
+                                            <Input value={ing.amount} onChange={(e) => updateIngredient(idx, 'amount', e.target.value)} placeholder="150g" className="h-9 bg-white dark:bg-gray-900 dark:border-gray-700" />
                                         </div>
                                         <Button type="button" variant="ghost" size="icon" onClick={() => removeIngredient(idx)} className="h-9 w-9 text-red-500 hover:bg-red-50 hover:text-red-700">
                                             <Trash2 className="h-4 w-4" />
@@ -667,20 +672,20 @@ export default function MenuManagement() {
 
                             <div className="grid gap-4">
                                 <div className="flex items-center justify-between border-b pb-2">
-                                    <h3 className="font-semibold text-gray-900">Tùy chọn thêm</h3>
-                                    <Button type="button" variant="outline" size="sm" onClick={addExtra} className="text-orange-600 border-orange-200 hover:bg-orange-50">
+                                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">Tùy chọn thêm</h3>
+                                    <Button type="button" variant="outline" size="sm" onClick={addExtra} className="text-orange-600 border-orange-200 dark:border-orange-900/50 hover:bg-orange-50 dark:hover:bg-orange-900/20">
                                         <Plus className="h-3 w-3 mr-1" /> Thêm
                                     </Button>
                                 </div>
                                 {newDish.extras?.map((extra, idx) => (
-                                    <div key={idx} className="flex gap-3 items-end p-3 bg-gray-50 rounded-lg">
+                                    <div key={idx} className="flex gap-3 items-end p-3 bg-gray-50 dark:bg-gray-900 rounded-lg border border-transparent dark:border-gray-800">
                                         <div className="flex-[2] space-y-1">
                                             <Label className="text-xs">Tên</Label>
-                                            <Input value={extra.name} onChange={(e) => updateExtra(idx, 'name', e.target.value)} placeholder="v.d. Thêm sốt Teriyaki" className="h-9 bg-white" />
+                                            <Input value={extra.name} onChange={(e) => updateExtra(idx, 'name', e.target.value)} placeholder="v.d. Thêm sốt Teriyaki" className="h-9 bg-white dark:bg-gray-900 dark:border-gray-700" />
                                         </div>
                                         <div className="flex-1 space-y-1">
                                             <Label className="text-xs">Giá</Label>
-                                            <Input value={extra.price} onChange={(e) => updateExtra(idx, 'price', e.target.value)} placeholder="+5.000 đ" className="h-9 bg-white" />
+                                            <Input value={extra.price} onChange={(e) => updateExtra(idx, 'price', e.target.value)} placeholder="+5.000 đ" className="h-9 bg-white dark:bg-gray-900 dark:border-gray-700" />
                                         </div>
                                         <Button type="button" variant="ghost" size="icon" onClick={() => removeExtra(idx)} className="h-9 w-9 text-red-500 hover:bg-red-50 hover:text-red-700">
                                             <Trash2 className="h-4 w-4" />
@@ -692,7 +697,7 @@ export default function MenuManagement() {
                                 )}
                             </div>
 
-                            <DialogFooter className="mt-6 sticky bottom-0 bg-white pt-2 border-t">
+                            <DialogFooter className="mt-6 sticky bottom-0 bg-white dark:bg-gray-950 pt-2 border-t dark:border-gray-800 flex flex-col sm:flex-row gap-2">
                                 <Button type="submit" disabled={isSubmitting} className="bg-orange-500 hover:bg-orange-600 text-white w-full sm:w-auto">
                                     {isSubmitting ? "Đang lưu..." : (editingDishId ? "Cập nhật món ăn" : "Lưu món ăn")}
                                 </Button>
@@ -704,13 +709,18 @@ export default function MenuManagement() {
 
             </div>
 
-            <Card className="border-gray-100 shadow-sm">
+            <Card className="border-gray-100 dark:border-gray-800/50 shadow-sm">
                 <CardHeader>
                     <div className="flex items-center justify-between">
                         <CardTitle>Thực đơn</CardTitle>
-                        <div className="relative w-64 hidden md:block">
-                            <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
-                            <Input placeholder="Tìm kiếm món ăn..." className="pl-8 bg-gray-50 border-gray-200 focus-visible:ring-orange-500" />
+                        <div className="relative w-full max-w-sm">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                            <Input
+                                placeholder="Tìm kiếm món ăn..."
+                                className="pl-10 bg-gray-50/50 dark:bg-gray-800/50 border-gray-100 dark:border-gray-800 focus:ring-orange-500 rounded-xl"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
                         </div>
                     </div>
                 </CardHeader>
@@ -718,36 +728,36 @@ export default function MenuManagement() {
                     {isLoading ? (
                         <div className="text-center py-4 text-gray-500">Đang tải...</div>
                     ) : (
-                        <div className="rounded-lg border border-gray-100 overflow-hidden">
-                            <table className="w-full text-sm text-left">
-                                <thead className="bg-gray-50 text-gray-500 font-medium border-b border-gray-100">
+                        <div className="rounded-lg border border-gray-100 dark:border-gray-800/50 overflow-hidden">
+                            <table className="w-full text-sm text-left hidden md:table">
+                                <thead className="bg-gray-50/50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400 text-sm font-semibold border-b border-gray-100 dark:border-gray-800">
                                     <tr>
-                                        <th className="p-4">Ảnh</th>
-                                        <th className="p-4">Tên món</th>
-                                        <th className="p-4">Danh mục</th>
-                                        <th className="p-4">Giá</th>
-                                        <th className="p-4">Trạng thái</th>
+                                        <th className="p-4 text-left">Ảnh</th>
+                                        <th className="p-4 text-left">Tên món</th>
+                                        <th className="p-4 text-left">Danh mục</th>
+                                        <th className="p-4 text-left">Giá</th>
+                                        <th className="p-4 text-left">Trạng thái</th>
                                         <th className="p-4 text-right">Hành động</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-100">
-                                    {dishes.map((dish) => (
-                                        <tr key={dish.id} className="hover:bg-gray-50/50 transition-colors">
+                                <tbody className="divide-y divide-gray-50 dark:divide-gray-800/50">
+                                    {filteredDishes.map((dish) => (
+                                        <tr key={dish.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors">
                                             <td className="p-4">
-                                                <img
-                                                    src={dish.image}
-                                                    alt={dish.title}
-                                                    className="w-12 h-12 rounded-lg object-cover bg-gray-100"
-                                                />
+                                                <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-gray-800 flex-shrink-0 overflow-hidden border-2 border-transparent dark:border-transparent shadow-sm">
+                                                    <img src={dish.image || "/images/dishes/placeholder.jpg"} alt={dish.title} className="w-full h-full object-cover" />
+                                                </div>
                                             </td>
-                                            <td className="p-4 font-medium text-gray-900">{dish.title}</td>
+                                            <td className="p-4">
+                                                <span className="font-medium text-gray-700 dark:text-gray-200">{dish.title}</span>
+                                            </td>
                                             <td className="p-4">
                                                 <div className="flex flex-wrap gap-1">
                                                     {(dish.categories || []).map(catId => {
                                                         const cat = categories.find(c => c.categoryid === catId);
                                                         const catName = cat ? cat.categoryname : catId;
                                                         return (
-                                                            <span key={catId} className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-medium bg-orange-50 text-orange-700 border border-orange-100">
+                                                            <span key={catId} className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-medium bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border border-orange-100 dark:border-orange-800">
                                                                 {CATEGORY_NAME_TRANSLATIONS[catName] || catName}
                                                             </span>
                                                         );
@@ -757,18 +767,18 @@ export default function MenuManagement() {
                                                     )}
                                                 </div>
                                             </td>
-                                            <td className="p-4 text-gray-600 font-medium">{dish.price}</td>
+                                            <td className="p-4 text-gray-600 dark:text-gray-400 font-medium">{dish.price}</td>
                                             <td className="p-4">
                                                 <select
                                                     value={dish.foodstatus}
                                                     onChange={(e) => handleUpdateStatus(dish.id, e.target.value)}
-                                                    className={`text-xs font-medium rounded-full px-2 py-1 border border-gray-200 focus:ring-2 focus:ring-orange-200 cursor-pointer outline-none
-                                                        ${dish.foodstatus === "Available" ? "bg-green-50 text-green-700 border-green-100" :
-                                                            dish.foodstatus === "Out of Stock" ? "bg-yellow-50 text-yellow-700 border-yellow-100" : "bg-red-50 text-red-700 border-red-100"}`}
+                                                    className={`text-xs font-semibold rounded-full px-3 py-1.5 border appearance-none focus:ring-2 focus:ring-orange-200 cursor-pointer outline-none transition-all shadow-sm
+                                                        ${dish.foodstatus === "Available" ? "bg-green-50 text-green-700 border-green-100 dark:bg-green-950/40 dark:text-green-400 dark:border-green-900/50" :
+                                                            dish.foodstatus === "Out of Stock" ? "bg-yellow-50 text-yellow-700 border-yellow-100 dark:bg-yellow-950/40 dark:text-yellow-400 dark:border-yellow-900/50" : "bg-red-50 text-red-700 border-red-100 dark:bg-red-950/40 dark:text-red-400 dark:border-red-900/50"}`}
                                                 >
-                                                    <option value="Available">Còn bán</option>
-                                                    <option value="Out of Stock">Hết hàng</option>
-                                                    <option value="Unavailable">Ngừng bán</option>
+                                                    <option value="Available" className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">Còn bán</option>
+                                                    <option value="Out of Stock" className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">Hết hàng</option>
+                                                    <option value="Unavailable" className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">Ngừng bán</option>
                                                 </select>
                                             </td>
 
@@ -801,15 +811,89 @@ export default function MenuManagement() {
                                             </td>
                                         </tr>
                                     ))}
-                                    {dishes.length === 0 && (
+                                    {filteredDishes.length === 0 && (
                                         <tr>
                                             <td colSpan={6} className="p-8 text-center text-gray-500">
-                                                Chưa có món ăn nào. Thêm món ăn đầu tiên của bạn!
+                                                Không tìm thấy món ăn nào phù hợp.
                                             </td>
                                         </tr>
                                     )}
                                 </tbody>
                             </table>
+
+                            {/* Mobile Card Layout */}
+                            <div className="md:hidden divide-y divide-gray-100 dark:divide-gray-800">
+                                {filteredDishes.map((dish) => (
+                                    <div key={dish.id} className="p-4 space-y-4 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors">
+                                        <div className="flex gap-4">
+                                            <div className="w-16 h-16 rounded-xl bg-gray-100 dark:bg-gray-800 flex-shrink-0 overflow-hidden border border-gray-200 dark:border-gray-800 shadow-sm">
+                                                <img src={dish.image || "/images/dishes/placeholder.jpg"} alt={dish.title} className="w-full h-full object-cover" />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className="font-bold text-gray-900 dark:text-gray-100 truncate">{dish.title}</h4>
+                                                <div className="flex flex-wrap gap-1 mt-1">
+                                                    {(dish.categories || []).map(catId => {
+                                                        const cat = categories.find(c => c.categoryid === catId);
+                                                        const catName = cat ? cat.categoryname : catId;
+                                                        return (
+                                                            <span key={catId} className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border border-orange-100 dark:border-orange-800/50 capitalize">
+                                                                {CATEGORY_NAME_TRANSLATIONS[catName] || catName}
+                                                            </span>
+                                                        );
+                                                    })}
+                                                </div>
+                                                <p className="text-orange-600 dark:text-orange-400 font-bold text-sm mt-1">{dish.price}</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center justify-between pt-3 border-t border-gray-50 dark:border-gray-800/50">
+                                            <select
+                                                value={dish.foodstatus}
+                                                onChange={(e) => handleUpdateStatus(dish.id, e.target.value)}
+                                                className={`text-[10px] font-bold rounded-full px-2 py-1 border focus:ring-2 focus:ring-orange-200 cursor-pointer outline-none transition-colors
+                                                    ${dish.foodstatus === "Available" ? "bg-green-50 text-green-700 border-green-200 dark:bg-green-950/40 dark:text-green-400" :
+                                                        dish.foodstatus === "Out of Stock" ? "bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-950/40 dark:text-yellow-400" : "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/40 dark:text-red-400"}`}
+                                            >
+                                                <option value="Available">Còn bán</option>
+                                                <option value="Out of Stock">Hết hàng</option>
+                                                <option value="Unavailable">Ngừng bán</option>
+                                            </select>
+                                            <div className="flex gap-1">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8 text-blue-600"
+                                                    onClick={async () => {
+                                                        try {
+                                                            const res = await fetch(`/api/dishes/${dish.id}`);
+                                                            if (res.ok) {
+                                                                const fullDish = await res.json();
+                                                                setNewDish(fullDish);
+                                                                setEditingDishId(dish.id);
+                                                                setIsDialogOpen(true);
+                                                            } else {
+                                                                alert("Không thể tải chi tiết món ăn.");
+                                                            }
+                                                        } catch (error) {
+                                                            console.error("Lỗi khi tải món ăn:", error);
+                                                        }
+                                                    }}
+                                                >
+                                                    <Edit className="h-4 w-4" />
+                                                </Button>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8 text-red-500"
+                                                    onClick={() => handleDelete(dish.id)}
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     )}
                 </CardContent>

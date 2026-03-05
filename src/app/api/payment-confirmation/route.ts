@@ -6,11 +6,14 @@ export async function POST(request: Request) {
     try {
         const supabase = await createClient();
         const body = await request.json();
-        const { orderid, paymentstatus } = body;
+        const { orderid: rawOrderId, paymentstatus } = body;
+        console.log("API: Confirming payment for:", rawOrderId);
 
-        if (!orderid) {
+        if (!rawOrderId) {
             return NextResponse.json({ error: 'Missing orderid' }, { status: 400 });
         }
+
+        const orderid = rawOrderId.replace(/^#/, '');
 
         const { error } = await supabase
             .from('payments')

@@ -32,17 +32,24 @@ export async function middleware(request: NextRequest) {
     // Lấy thông tin user để làm mới session nếu cần
     const { data: { user } } = await supabase.auth.getUser()
 
-    // 1. Bảo vệ trang Admin
-    if (request.nextUrl.pathname.startsWith('/admin')) {
-        const adminToken = request.cookies.get('admin_token')?.value
-        if (!adminToken) {
-            return NextResponse.redirect(new URL('/auth/login', request.url))
-        }
+    const adminToken = request.cookies.get('admin_token')?.value
+    const isApiRoute = request.nextUrl.pathname.startsWith('/api')
+    const isAuthRoute = request.nextUrl.pathname.startsWith('/auth')
+    const isAdminRoute = request.nextUrl.pathname.startsWith('/admin')
+
+    // 1. Bảo vệ trang Admin (Chặn khách thường vào trang admin)
+    if (isAdminRoute && !adminToken) {
+        return NextResponse.redirect(new URL('/auth/login', request.url))
     }
 
-    // 2. Chặn user đã login vào lại trang login/register
-    if (user && request.nextUrl.pathname.startsWith('/auth')) {
-        return NextResponse.redirect(new URL('/', request.url))
+    // 2. Chặn admin vào các trang dành cho khách hàng
+    if (adminToken && !isAdminRoute && !isApiRoute && !isAuthRoute) {
+        return NextResponse.redirect(new URL('/admin', request.url))
+    }
+
+    // 3. Chặn user đã login vào lại trang login/register
+    if (user && isAuthRoute && !request.nextUrl.pathname.includes('logout')) {
+        return NextResponse.redirect(new URL(adminToken ? '/admin' : '/', request.url))
     }
 
     return supabaseResponse

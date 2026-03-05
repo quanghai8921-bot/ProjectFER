@@ -5,7 +5,7 @@ import { ArrowRight, Sparkles, Star, Utensils } from "lucide-react"
 
 export function Hero() {
     return (
-        <section className="bg-primary pt-12 pb-24 md:pt-20 md:pb-32 overflow-hidden relative">
+        <section className="bg-primary dark:bg-gray-950 pt-12 pb-24 md:pt-20 md:pb-32 overflow-hidden relative transition-colors duration-300">
 
 
             <div className="container mx-auto px-4 md:px-6">
@@ -33,20 +33,20 @@ export function Hero() {
 
                         <div className="flex flex-wrap gap-4">
                             <Link href="/menu">
-                                <Button size="lg" className="bg-white text-primary hover:bg-white/90 rounded-full h-12 px-8 font-semibold">
+                                <Button size="lg" className="bg-white dark:bg-gray-800 text-primary dark:text-orange-500 hover:bg-white/90 dark:hover:bg-gray-700 rounded-full h-12 px-8 font-semibold transition-all">
                                     <Utensils className="mr-2 h-5 w-5" />
                                     Xem Thực đơn
                                 </Button>
                             </Link>
                             <Link href="/ai-advisor">
-                                <Button size="lg" variant="outline" className="bg-white text-primary hover:bg-white/10 rounded-full h-12 px-8 font-semibold">
+                                <Button size="lg" variant="outline" className="bg-white/10 dark:bg-gray-800/40 text-white border-white/20 hover:bg-white/20 rounded-full h-12 px-8 font-semibold transition-all">
                                     <Sparkles className="mr-2 h-5 w-5" />
                                     Tư vấn AI
                                 </Button>
                             </Link>
 
                             <a href="/profile">
-                                <Button size="lg" variant="outline" className="bg-white text-primary hover:bg-white/10 rounded-full h-12 px-8 font-semibold">
+                                <Button size="lg" variant="outline" className="bg-white/10 dark:bg-gray-800/40 text-white border-white/20 hover:bg-white/20 rounded-full h-12 px-8 font-semibold transition-all">
                                     <span className="mr-2 not-italic">👤</span>
                                     Hồ sơ của tôi
                                 </Button>

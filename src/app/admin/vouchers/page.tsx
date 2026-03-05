@@ -190,7 +190,7 @@ export default function VouchersManagement() {
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
                         <Button
-                            className="bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-200"
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-xl transition-all shadow-lg shadow-orange-200 dark:shadow-none font-bold group"
                             onClick={() => {
                                 setNewVoucher(DEFAULT_VOUCHER);
                                 setEditingVoucherId(null);
@@ -199,7 +199,7 @@ export default function VouchersManagement() {
                             <Plus className="mr-2 h-4 w-4" /> Tạo Voucher
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[600px] overflow-y-auto max-h-[90vh]">
+                    <DialogContent className="sm:max-w-[600px] overflow-y-auto max-h-[90vh] dark:bg-gray-950 dark:border-gray-800">
                         <DialogHeader>
                             <DialogTitle>{editingVoucherId ? "Cập nhật Voucher" : "Tạo Voucher Mới"}</DialogTitle>
                             <DialogDescription>
@@ -209,14 +209,14 @@ export default function VouchersManagement() {
                         <form onSubmit={handleSubmit} className="grid gap-6 py-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="grid gap-2">
-                                    <Label htmlFor="vouchercode" className="font-semibold text-gray-700">Mã Voucher</Label>
+                                    <Label htmlFor="vouchercode" className="font-semibold text-gray-700 dark:text-gray-300">Mã Voucher</Label>
                                     <div className="relative">
                                         <Ticket className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                                         <Input
                                             id="vouchercode"
                                             name="vouchercode"
                                             placeholder="FREESHIP50"
-                                            className="pl-9 bg-gray-50 uppercase font-mono"
+                                            className="pl-9 bg-gray-50 dark:bg-gray-900 dark:border-gray-700 uppercase font-mono dark:text-gray-100"
                                             value={newVoucher.vouchercode}
                                             onChange={handleInputChange}
                                             required
@@ -224,11 +224,11 @@ export default function VouchersManagement() {
                                     </div>
                                 </div>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="vouchertype" className="font-semibold text-gray-700">Loại Voucher</Label>
+                                    <Label htmlFor="vouchertype" className="font-semibold text-gray-700 dark:text-gray-300">Loại Voucher</Label>
                                     <select
                                         id="vouchertype"
                                         name="vouchertype"
-                                        className="flex h-10 w-full rounded-md border border-input bg-gray-50 px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        className="flex h-10 w-full rounded-md border border-input bg-gray-50 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                         value={newVoucher.vouchertype}
                                         onChange={handleInputChange}
                                     >
@@ -242,7 +242,7 @@ export default function VouchersManagement() {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="grid gap-2">
-                                    <Label htmlFor="discountvalue" className="font-semibold text-gray-700">Giá trị giảm giá (VNĐ)</Label>
+                                    <Label htmlFor="discountvalue" className="font-semibold text-gray-700 dark:text-gray-300">Giá trị giảm giá (VNĐ)</Label>
                                     <div className="relative">
                                         <Banknote className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                                         <Input
@@ -250,7 +250,7 @@ export default function VouchersManagement() {
                                             name="discountvalue"
                                             type="number"
                                             min="0"
-                                            className="pl-9 bg-gray-50"
+                                            className="pl-9 bg-gray-50 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
                                             value={newVoucher.discountvalue || ''}
                                             onChange={handleNumberChange}
                                             required
@@ -258,7 +258,7 @@ export default function VouchersManagement() {
                                     </div>
                                 </div>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="minordervalue" className="font-semibold text-gray-700">Giá trị đơn hàng tối thiểu (VNĐ)</Label>
+                                    <Label htmlFor="minordervalue" className="font-semibold text-gray-700 dark:text-gray-300">Giá trị đơn hàng tối thiểu (VNĐ)</Label>
                                     <div className="relative">
                                         <Banknote className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                                         <Input
@@ -266,7 +266,7 @@ export default function VouchersManagement() {
                                             name="minordervalue"
                                             type="number"
                                             min="0"
-                                            className="pl-9 bg-gray-50"
+                                            className="pl-9 bg-gray-50 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
                                             value={newVoucher.minordervalue || ''}
                                             onChange={handleNumberChange}
                                             required
@@ -276,14 +276,14 @@ export default function VouchersManagement() {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="maxusage" className="font-semibold text-gray-700">Giới hạn sử dụng</Label>
+                                <Label htmlFor="maxusage" className="font-semibold text-gray-700 dark:text-gray-300">Giới hạn sử dụng</Label>
                                 <Input
                                     id="maxusage"
                                     name="maxusage"
                                     type="number"
                                     min="1"
                                     placeholder="100"
-                                    className="bg-gray-50"
+                                    className="bg-gray-50 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
                                     value={newVoucher.maxusage || ''}
                                     onChange={handleNumberChange}
                                     required
@@ -292,14 +292,14 @@ export default function VouchersManagement() {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="grid gap-2">
-                                    <Label htmlFor="startdate" className="font-semibold text-gray-700">Ngày bắt đầu</Label>
+                                    <Label htmlFor="startdate" className="font-semibold text-gray-700 dark:text-gray-300">Ngày bắt đầu</Label>
                                     <div className="relative">
                                         <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                                         <Input
                                             id="startdate"
                                             name="startdate"
                                             type="date"
-                                            className="pl-9 bg-gray-50"
+                                            className="pl-9 bg-gray-50 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
                                             value={newVoucher.startdate?.split('T')[0] || ''}
                                             onChange={handleInputChange}
                                             required
@@ -307,14 +307,14 @@ export default function VouchersManagement() {
                                     </div>
                                 </div>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="enddate" className="font-semibold text-gray-700">Ngày kết thúc</Label>
+                                    <Label htmlFor="enddate" className="font-semibold text-gray-700 dark:text-gray-300">Ngày kết thúc</Label>
                                     <div className="relative">
                                         <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                                         <Input
                                             id="enddate"
                                             name="enddate"
                                             type="date"
-                                            className="pl-9 bg-gray-50"
+                                            className="pl-9 bg-gray-50 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
                                             value={newVoucher.enddate?.split('T')[0] || ''}
                                             onChange={handleInputChange}
                                             required
@@ -324,11 +324,11 @@ export default function VouchersManagement() {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="isactive" className="font-semibold text-gray-700">Trạng thái</Label>
+                                <Label htmlFor="isactive" className="font-semibold text-gray-700 dark:text-gray-300">Trạng thái</Label>
                                 <select
                                     id="isactive"
                                     name="isactive"
-                                    className="flex h-10 w-full rounded-md border border-input bg-gray-50 px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    className="flex h-10 w-full rounded-md border border-input bg-gray-50 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                     value={newVoucher.isactive !== undefined ? newVoucher.isactive.toString() : "1"}
                                     onChange={(e) => setNewVoucher(prev => ({ ...prev, isactive: Number(e.target.value) }))}
                                 >
@@ -337,11 +337,11 @@ export default function VouchersManagement() {
                                 </select>
                             </div>
 
-                            <DialogFooter className="mt-6 pt-4 border-t border-gray-100">
-                                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                            <DialogFooter className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row gap-2">
+                                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} className="w-full sm:w-auto">
                                     Hủy
                                 </Button>
-                                <Button type="submit" disabled={isSubmitting} className="bg-orange-500 hover:bg-orange-600 text-white">
+                                <Button type="submit" disabled={isSubmitting} className="bg-orange-500 hover:bg-orange-600 text-white w-full sm:w-auto">
                                     {isSubmitting ? "Đang lưu..." : (editingVoucherId ? "Cập nhật Voucher" : "Tạo Voucher")}
                                 </Button>
                             </DialogFooter>
@@ -350,13 +350,13 @@ export default function VouchersManagement() {
                 </Dialog>
             </div>
 
-            <Card className="border-gray-100 shadow-sm">
+            <Card className="border-gray-100 dark:border-gray-800/50 shadow-sm bg-white dark:bg-gray-900">
                 <CardHeader>
                     <div className="flex items-center justify-between">
                         <CardTitle>Tất cả Voucher</CardTitle>
                         <div className="relative w-64 hidden md:block">
                             <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
-                            <Input placeholder="Tìm kiếm mã..." className="pl-8 bg-gray-50 border-gray-200 focus-visible:ring-orange-500" />
+                            <Input placeholder="Tìm kiếm mã..." className="pl-8 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus-visible:ring-orange-500 dark:text-gray-100" />
                         </div>
                     </div>
                 </CardHeader>
@@ -364,9 +364,9 @@ export default function VouchersManagement() {
                     {isLoading ? (
                         <div className="text-center py-8 text-gray-500">Đang tải voucher...</div>
                     ) : (
-                        <div className="rounded-lg border border-gray-100 overflow-hidden">
-                            <table className="w-full text-sm text-left">
-                                <thead className="bg-gray-50 text-gray-500 font-medium border-b border-gray-100">
+                        <div className="rounded-lg border border-gray-100 dark:border-gray-800/50 overflow-hidden">
+                            <table className="w-full text-sm text-left hidden lg:table">
+                                <thead className="bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-medium border-b border-gray-100 dark:border-gray-800/50">
                                     <tr>
                                         <th className="p-4">Mã</th>
                                         <th className="p-4">Loại</th>
@@ -378,31 +378,31 @@ export default function VouchersManagement() {
                                         <th className="p-4 text-right">Thao tác</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-100">
+                                <tbody className="divide-y divide-gray-100 dark:divide-gray-800/50">
                                     {vouchers.map((voucher) => (
-                                        <tr key={voucher.voucherid} className="hover:bg-gray-50/50 transition-colors">
+                                        <tr key={voucher.voucherid} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors">
                                             <td className="p-4">
-                                                <div className="font-bold text-gray-900 bg-gray-100/80 inline-block px-2.5 py-1 rounded-md tracking-widest font-mono text-xs border border-gray-200">
+                                                <div className="font-bold text-gray-900 dark:text-gray-100 bg-gray-100/80 dark:bg-gray-800/80 inline-block px-2.5 py-1 rounded-md tracking-widest font-mono text-xs border border-gray-200 dark:border-gray-700/50">
                                                     {voucher.vouchercode}
                                                 </div>
                                             </td>
                                             <td className="p-4">
                                                 <span className={`inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider
-                                                    ${voucher.vouchertype === "Ship" ? "bg-blue-50 text-blue-700" :
-                                                        voucher.vouchertype === "Food" ? "bg-orange-50 text-orange-700" :
-                                                            voucher.vouchertype === "Drink" ? "bg-purple-50 text-purple-700" : "bg-gray-100 text-gray-700"}`}
+                                                    ${voucher.vouchertype === "Ship" ? "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300" :
+                                                        voucher.vouchertype === "Food" ? "bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300" :
+                                                            voucher.vouchertype === "Drink" ? "bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300" : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"}`}
                                                 >
                                                     {voucher.vouchertype}
                                                 </span>
                                             </td>
-                                            <td className="p-4 text-orange-600 font-bold">
+                                            <td className="p-4 text-orange-600 dark:text-orange-400 font-bold">
                                                 {formatCurrency(voucher.discountvalue)}
                                             </td>
-                                            <td className="p-4 text-gray-600 font-medium">
+                                            <td className="p-4 text-gray-600 dark:text-gray-400 font-medium">
                                                 {formatCurrency(voucher.minordervalue)}
                                             </td>
                                             <td className="p-4">
-                                                <span className="text-gray-600 font-medium">
+                                                <span className="text-gray-600 dark:text-gray-400 font-medium">
                                                     {(!voucher.maxusage || voucher.maxusage <= 0) ? "Đã hết" : `${voucher.maxusage} lượt`}
                                                 </span>
                                             </td>
@@ -417,8 +417,8 @@ export default function VouchersManagement() {
                                                     value={voucher.isactive?.toString() || "0"}
                                                     onChange={(e) => handleUpdateStatus(voucher.voucherid, Number(e.target.value))}
                                                     className={`text-xs font-bold rounded-full px-2 py-1.5 border focus:ring-2 focus:ring-orange-200 cursor-pointer outline-none transition-colors
-                                                        ${voucher.isactive === 1 ? "bg-green-50 text-green-700 border-green-200 hover:bg-green-100" :
-                                                            "bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100"}`}
+                                                        ${voucher.isactive === 1 ? "bg-green-50 text-green-700 border-green-200 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800 dark:hover:bg-green-900/50" :
+                                                            "bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700 dark:hover:bg-gray-700"}`}
                                                 >
                                                     <option value="1">Hoạt động</option>
                                                     <option value="0">Vô hiệu hóa</option>
@@ -460,6 +460,89 @@ export default function VouchersManagement() {
                                     )}
                                 </tbody>
                             </table>
+
+                            {/* Mobile Card Layout */}
+                            <div className="lg:hidden divide-y divide-gray-100 dark:divide-gray-800">
+                                {vouchers.map((voucher) => (
+                                    <div key={voucher.voucherid} className="p-4 space-y-4 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors">
+                                        <div className="flex justify-between items-start">
+                                            <div className="font-bold text-gray-900 dark:text-gray-100 bg-gray-100/80 dark:bg-gray-800/80 inline-block px-2.5 py-1 rounded-md tracking-widest font-mono text-xs border border-gray-200 dark:border-gray-700/50">
+                                                {voucher.vouchercode}
+                                            </div>
+                                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider
+                                                ${voucher.vouchertype === "Ship" ? "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300" :
+                                                    voucher.vouchertype === "Food" ? "bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300" :
+                                                        voucher.vouchertype === "Drink" ? "bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300" : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"}`}
+                                            >
+                                                {voucher.vouchertype}
+                                            </span>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Giảm giá & Tối thiểu</p>
+                                                <div className="flex flex-col">
+                                                    <span className="font-bold text-orange-600 dark:text-orange-400">{formatCurrency(voucher.discountvalue)}</span>
+                                                    <span className="text-xs text-gray-500">Từ {formatCurrency(voucher.minordervalue)}</span>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Lượt dùng</p>
+                                                <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                                    {(!voucher.maxusage || voucher.maxusage <= 0) ? "Đã hết" : `${voucher.maxusage} lượt`}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center justify-between pt-3 border-t border-gray-50 dark:border-gray-800/50">
+                                            <div className="flex flex-col text-[10px] text-gray-500 gap-1">
+                                                <span className="flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-green-500" /> {formatDate(voucher.startdate)}</span>
+                                                <span className="flex items-center gap-1"><XCircle className="w-3 h-3 text-red-400" /> {formatDate(voucher.enddate)}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <select
+                                                    value={voucher.isactive?.toString() || "0"}
+                                                    onChange={(e) => handleUpdateStatus(voucher.voucherid, Number(e.target.value))}
+                                                    className={`text-[10px] font-bold rounded-full px-2 py-1 border focus:ring-2 focus:ring-orange-200 cursor-pointer outline-none transition-colors
+                                                        ${voucher.isactive === 1 ? "bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800" :
+                                                            "bg-gray-50 text-gray-500 border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700"}`}
+                                                >
+                                                    <option value="1">Bật</option>
+                                                    <option value="0">Tắt</option>
+                                                </select>
+                                                <div className="flex gap-1">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-blue-600"
+                                                        onClick={() => {
+                                                            setNewVoucher(voucher);
+                                                            setEditingVoucherId(voucher.voucherid);
+                                                            setIsDialogOpen(true);
+                                                        }}
+                                                    >
+                                                        <Edit className="h-4 w-4" />
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-red-500"
+                                                        onClick={() => handleDelete(voucher.voucherid)}
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                                {vouchers.length === 0 && !isLoading && (
+                                    <div className="p-8 text-center text-gray-500">
+                                        <Ticket className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                                        Chưa có voucher nào.
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     )}
                 </CardContent>

@@ -21,14 +21,14 @@ const dishes = (dishesData as any[]).map((dish) => ({
 
 export function PopularDishes() {
     return (
-        <section className="py-20 bg-gray-50/50">
+        <section className="py-20 bg-gray-50/50 dark:bg-gray-950">
             <div className="container mx-auto px-4">
                 <div className="flex justify-between items-end mb-12">
                     <div>
-                        <h2 className="text-3xl font-bold text-gray-900">
+                        <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                             Món ăn <span className="text-primary">Phổ biến</span>
                         </h2>
-                        <p className="text-gray-500 mt-2">
+                        <p className="text-gray-500 dark:text-gray-400 mt-2">
                             Những món ăn được yêu thích nhất tại SmartBite
                         </p>
                     </div>
@@ -40,8 +40,8 @@ export function PopularDishes() {
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {dishes.map((dish, index) => (
                         <Link href={`/dishes/${dish.slug}`} key={index} className="block group">
-                            <Card className="overflow-hidden bg-white hover:shadow-lg transition-all duration-300 border-gray-100 h-full">
-                                <div className="relative aspect-[5/4] bg-gray-100 overflow-hidden">
+                            <Card className="overflow-hidden bg-white dark:bg-gray-900 hover:shadow-lg transition-all duration-300 border-gray-100 dark:border-gray-800 h-full">
+                                <div className="relative aspect-[5/4] bg-gray-100 dark:bg-gray-800 overflow-hidden">
                                     <div className="w-full h-full group-hover:scale-105 transition-transform duration-500">
                                         {dish.image}
                                     </div>
@@ -50,14 +50,14 @@ export function PopularDishes() {
 
                                 <CardContent className="p-6">
                                     <div className="flex justify-between items-start mb-2">
-                                        <h3 className="font-bold text-gray-900 group-hover:text-primary transition-colors">{dish.title}</h3>
-                                        <div className="flex items-center gap-1 text-sm font-medium text-gray-900">
+                                        <h3 className="font-bold text-gray-900 dark:text-gray-100 group-hover:text-primary transition-colors">{dish.title}</h3>
+                                        <div className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-gray-100">
                                             <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                                             {dish.rating}
                                         </div>
                                     </div>
 
-                                    <p className="text-sm text-gray-500 line-clamp-2 mb-4">
+                                    <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-4">
                                         {dish.desc}
                                     </p>
 

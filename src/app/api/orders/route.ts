@@ -213,7 +213,7 @@ export async function GET(request: Request) {
             .select(`
                 *,
                 users:userid (fullname, email, phonenumber),
-                orderitems (*, fooditems:foodid (foodname, foodimageurl), orderitemtoppings (toppingid, price, toppingoptions:toppingid(toppingname))),
+                orderitems (*, fooditems:foodid (foodname, foodimageurl, calories), orderitemtoppings (toppingid, price, toppingoptions:toppingid(toppingname))),
                 payments (paymentstatus, paymentmethod)
             `)
             .order('ordertime', { ascending: false });

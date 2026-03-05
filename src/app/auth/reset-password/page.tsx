@@ -38,12 +38,12 @@ function ResetPasswordForm() {
         setSuccess("");
 
         if (newPassword !== confirmPassword) {
-            setError("Passwords do not match.");
+            setError("Mật khẩu không khớp.");
             return;
         }
 
         if (newPassword.length < 6) {
-            setError("Password must have at least 6 characters.");
+            setError("Mật khẩu phải có ít nhất 6 ký tự.");
             return;
         }
 
@@ -78,15 +78,15 @@ function ResetPasswordForm() {
     };
 
     return (
-        <div className="flex min-h-screen w-full items-center justify-center bg-[#FFF8F3] p-4 lg:p-8">
-            <div className="flex w-full max-w-5xl overflow-hidden rounded-[2rem] bg-white shadow-xl lg:flex-row flex-col">
+        <div className="flex min-h-screen w-full items-center justify-center bg-[#FFF8F3] dark:bg-gray-950 p-4 lg:p-8 transition-colors duration-300">
+            <div className="flex w-full max-w-5xl overflow-hidden rounded-[2rem] bg-white dark:bg-gray-900 shadow-xl lg:flex-row flex-col border border-transparent dark:border-gray-800">
                 <div className="flex w-full flex-col justify-center p-8 lg:p-16 relative">
                     <div className="mx-auto w-full max-w-md space-y-8">
                         <div className="space-y-4 text-center">
-                            <h1 className="text-3xl font-bold text-gray-900 mt-6">Thay đổi mật khẩu</h1>
-                            <p className="text-gray-500 text-sm">
+                            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-6">Thay đổi mật khẩu</h1>
+                            <p className="text-gray-500 dark:text-gray-400 text-sm">
                                 Vui lòng nhập mã OTP gồm 6 chữ số được gửi đến email của bạn <br />
-                                <span className="font-semibold text-gray-800">{email}</span>
+                                <span className="font-semibold text-gray-800 dark:text-gray-200">{email}</span>
                             </p>
                         </div>
 
@@ -103,14 +103,14 @@ function ResetPasswordForm() {
                             )}
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">Mã OTP (6 chữ số)</label>
+                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Mã OTP (6 chữ số)</label>
                                 <div className="relative">
                                     <Hash className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                                     <Input
                                         type="text"
                                         maxLength={6}
                                         placeholder="123456"
-                                        className="pl-10 h-12 bg-gray-50 border-gray-200 tracking-widest text-lg font-mono placeholder:tracking-normal placeholder:font-sans"
+                                        className="pl-10 h-12 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 tracking-widest text-lg font-mono placeholder:tracking-normal placeholder:font-sans text-gray-900 dark:text-gray-100 focus-visible:ring-orange-500"
                                         required
                                         value={otp}
                                         onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, ''))}
@@ -119,13 +119,13 @@ function ResetPasswordForm() {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">Mật khẩu mới</label>
+                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Mật khẩu mới</label>
                                 <div className="relative">
                                     <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                                     <Input
                                         type={showPassword ? "text" : "password"}
                                         placeholder="••••••••"
-                                        className="pl-10 pr-10 h-12 bg-gray-50 border-gray-200"
+                                        className="pl-10 pr-10 h-12 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 focus-visible:ring-orange-500"
                                         required
                                         value={newPassword}
                                         onChange={(e) => setNewPassword(e.target.value)}
@@ -141,13 +141,13 @@ function ResetPasswordForm() {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">Xác nhận mật khẩu mới</label>
+                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Xác nhận mật khẩu mới</label>
                                 <div className="relative">
                                     <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                                     <Input
                                         type={showPassword ? "text" : "password"}
                                         placeholder="••••••••"
-                                        className="pl-10 pr-10 h-12 bg-gray-50 border-gray-200"
+                                        className="pl-10 pr-10 h-12 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 focus-visible:ring-orange-500"
                                         required
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
@@ -155,12 +155,12 @@ function ResetPasswordForm() {
                                 </div>
                             </div>
 
-                            <Button type="submit" disabled={isLoading} className="w-full bg-orange-500 hover:bg-orange-600 text-white h-12 text-lg font-medium shadow-orange-200 shadow-lg mt-4">
+                            <Button type="submit" disabled={isLoading} className="w-full bg-orange-500 hover:bg-orange-600 text-white h-12 text-lg font-medium mt-4">
                                 {isLoading ? "Đang xử lý..." : "Thay đổi mật khẩu"}
                             </Button>
 
                             <div className="text-center pt-4">
-                                <Link href="/auth/login" className="text-sm font-medium text-gray-500 hover:text-orange-500 transition-colors">
+                                <Link href="/auth/login" className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-orange-500 transition-colors">
                                     Quay lại đăng nhập
                                 </Link>
                             </div>

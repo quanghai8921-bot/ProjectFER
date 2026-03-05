@@ -106,7 +106,7 @@ export default function DishPage() {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-gray-50 flex flex-col">
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col transition-colors duration-300">
                 <Navbar />
                 <main className="flex-grow flex items-center justify-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
@@ -120,10 +120,10 @@ export default function DishPage() {
 
     if (error || isUnavailable) {
         return (
-            <div className="min-h-screen bg-gray-50 flex flex-col">
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col transition-colors duration-300">
                 <Navbar />
                 <main className="flex-grow flex flex-col items-center justify-center gap-4">
-                    <h2 className="text-2xl font-bold text-gray-900">{dish?.foodstatus === 'Unavailable' ? 'Món ăn đã ngừng kinh doanh' : 'Không tìm thấy món ăn'}</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{dish?.foodstatus === 'Unavailable' ? 'Món ăn đã ngừng kinh doanh' : 'Không tìm thấy món ăn'}</h2>
                     <Link href="/menu">
                         <span className="text-orange-500 hover:underline">Quay lại Menu</span>
                     </Link>
@@ -148,18 +148,18 @@ export default function DishPage() {
     const images = dish.images && dish.images.length > 0 ? dish.images : [dish.image];
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col transition-colors duration-300">
             <Navbar />
 
             <main className={`flex-grow container mx-auto px-4 py-8 transition-all duration-500 ${dish.foodstatus === "Out of Stock" ? "grayscale opacity-60 pointer-events-none" : ""}`}>
                 {dish.foodstatus === "Out of Stock" && (
-                    <div className="bg-red-50 text-red-600 px-4 py-2 rounded-lg mb-6 text-sm font-medium border border-red-100 flex items-center justify-center">
+                    <div className="bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 px-4 py-2 rounded-lg mb-6 text-sm font-medium border border-red-100 dark:border-red-900/30 flex items-center justify-center">
                         Thông báo: Món ăn này hiện đang tạm hết hàng. Quý khách vui lòng chọn món khác.
                     </div>
                 )}
 
                 <div className="mb-6">
-                    <Link href="/menu" className="inline-flex items-center text-sm text-gray-500 hover:text-primary transition-colors">
+                    <Link href="/menu" className="inline-flex items-center text-sm text-gray-500 dark:text-gray-400 hover:text-primary transition-colors">
                         <ArrowLeft className="w-4 h-4 mr-1" />
                         Quay lại Menu
                     </Link>
@@ -185,11 +185,11 @@ export default function DishPage() {
                             aiAnalysis={aiAnalysis}
                         />
 
-                        <Separator />
+                        <Separator className="dark:bg-gray-800" />
 
                         <IngredientsList ingredients={dish.ingredients} />
 
-                        <Separator />
+                        <Separator className="dark:bg-gray-800" />
 
                         <CustomizationOptions extras={dish.extras} selectedExtras={selectedExtras} onToggleExtra={handleToggleExtra} />
 
@@ -205,17 +205,17 @@ export default function DishPage() {
                     <AddToCart price={currentTotalPrice} dish={dish} selectedExtras={selectedExtras} />
                 </div>
 
-                <Separator className="my-12" />
+                <Separator className="my-12 dark:bg-gray-800" />
 
                 {isMounted && eligibility.eligible && (
-                    <div className="mb-12 bg-gradient-to-r from-orange-50 to-white p-8 rounded-[40px] border border-orange-100 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
+                    <div className="mb-12 bg-gradient-to-r from-orange-50 to-white dark:from-orange-950/20 dark:to-gray-900 p-8 rounded-[40px] border border-orange-100 dark:border-orange-900/30 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
                         <div className="flex items-center gap-4">
-                            <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-md">
+                            <div className="w-16 h-16 bg-white dark:bg-gray-800 rounded-2xl flex items-center justify-center shadow-md">
                                 <Star className="w-8 h-8 text-orange-400 fill-orange-400" />
                             </div>
                             <div>
-                                <h3 className="text-xl font-bold text-gray-900">Món ăn này rất tuyệt, đúng không?</h3>
-                                <p className="text-gray-500">Bạn đã thưởng thức món này, hãy chia sẻ cảm nhận với mọi người nhé!</p>
+                                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Món ăn này rất tuyệt, đúng không?</h3>
+                                <p className="text-gray-500 dark:text-gray-400">Bạn đã thưởng thức món này, hãy chia sẻ cảm nhận với mọi người nhé!</p>
                             </div>
                         </div>
                         <ReviewDialog
@@ -223,7 +223,7 @@ export default function DishPage() {
                             type="dish"
                             orderItems={eligibility.orderItems}
                             triggerElement={
-                                <div className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-4 rounded-2xl shadow-lg shadow-orange-100 transition-all active:scale-95 flex items-center gap-2 cursor-pointer">
+                                <div className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-4 rounded-2xl transition-all active:scale-95 flex items-center gap-2 cursor-pointer">
                                     <Star className="w-5 h-5 fill-white" />
                                     Viết đánh giá ngay
                                 </div>
@@ -238,7 +238,7 @@ export default function DishPage() {
 
                 <DishReviews foodId={dish.foodid} refreshKey={reviewRefreshKey} />
 
-                <Separator className="my-12" />
+                <Separator className="my-12 dark:bg-gray-800" />
 
                 <RelatedDishes currentDishId={dish.id} />
             </main>

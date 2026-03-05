@@ -35,9 +35,9 @@ export default function LoginPage() {
             const data = await res.json();
 
             if (res.ok && data.success) {
-                
 
-                
+
+
                 if (data.role === 'admin') {
                     localStorage.setItem("user", JSON.stringify({
                         userid: data.user?.userid,
@@ -56,13 +56,13 @@ export default function LoginPage() {
                         addressdelivery: data.user?.addressdelivery,
                     }));
                     window.dispatchEvent(new Event("authChange"));
-                    router.push("/"); 
+                    router.push("/");
                 }
             } else {
                 setError(data.error || "Login failed");
             }
         } catch (err) {
-            setError("Something went wrong. Please try again.");
+            setError("Đã xảy ra lỗi. Vui lòng thử lại.");
         } finally {
             setIsLoading(false);
         }
@@ -84,17 +84,17 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="flex min-h-screen w-full items-center justify-center bg-[#FFF8F3] p-4 lg:p-8">
-            
-            <div className="flex w-full max-w-6xl overflow-hidden rounded-[2rem] bg-white shadow-xl lg:flex-row flex-col">
+        <div className="flex min-h-screen w-full items-center justify-center bg-[#FFF8F3] dark:bg-gray-950 p-4 lg:p-8 transition-colors duration-300">
 
-                
-                <div className="relative w-full lg:w-1/2 p-12 bg-orange-50 flex flex-col items-center justify-center text-center">
-                    
+            <div className="flex w-full max-w-6xl overflow-hidden rounded-[2rem] bg-white dark:bg-gray-900 shadow-xl lg:flex-row flex-col border border-transparent dark:border-gray-800">
+
+
+                <div className="relative w-full lg:w-1/2 p-12 bg-orange-50 dark:bg-gray-800/50 flex flex-col items-center justify-center text-center">
+
                     <div className="absolute inset-0 bg-gradient-to-br from-orange-100/50 to-transparent"></div>
 
                     <div className="relative z-10 w-full max-w-md space-y-8">
-                        <div className="relative aspect-square w-full overflow-hidden rounded-3xl shadow-lg border-4 border-white">
+                        <div className="relative aspect-square w-full overflow-hidden rounded-3xl shadow-lg border-4 border-white dark:border-gray-800">
                             <img
                                 src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
                                 alt="Healthy Food Bowl"
@@ -103,34 +103,35 @@ export default function LoginPage() {
                         </div>
 
                         <div className="space-y-4">
-                            <h2 className="text-3xl font-bold text-gray-900">
-                                Eat well, live well <br />
-                                <span className="text-orange-500">every day.</span>
+                            <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                                Ăn uống lành mạnh, sống khỏe mạnh <br />
+                                <span className="text-orange-500 underline decoration-orange-500/30">mỗi ngày.</span>
                             </h2>
-                            <p className="text-gray-600">
-                                Login to receive personalized AI menus and track your nutrition today.
+                            <p className="text-gray-600 dark:text-gray-400">
+                                Đăng nhập để nhận thực đơn AI được cá nhân hóa và theo dõi dinh dưỡng của bạn ngay hôm nay.
                             </p>
                         </div>
                     </div>
                 </div>
 
-                
-                <div className="flex w-full lg:w-1/2 flex-col justify-center p-12 lg:p-16 relative">
-                    <div className="mx-auto w-full max-w-md space-y-8">
 
-                        <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <div className="inline-block rounded-full bg-orange-100 px-3 py-1 text-xs font-semibold text-orange-600 uppercase tracking-wide">
-                                    Welcome Back
+                <div className="flex w-full lg:w-1/2 flex-col justify-between p-12 lg:p-16 relative">
+                    <div className="mx-auto w-full max-w-md space-y-8">
+                        <div className="space-y-4">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                <div className="inline-block self-start rounded-full bg-orange-100 dark:bg-orange-950/50 px-3 py-1 text-xs font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wide">
+                                    Chào mừng trở lại
                                 </div>
-                                <Link href="/" className="text-sm font-medium text-gray-500 hover:text-orange-500 transition-colors">
-                                    ← Back to Home
+                                <Link href="/" className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-orange-500 transition-colors">
+                                    ← Quay lại trang chủ
                                 </Link>
                             </div>
-                            <h1 className="text-3xl font-bold text-gray-900">Login</h1>
-                            <p className="text-gray-500 text-sm">
-                                Don't have an account? <Link href="/auth/register" className="font-medium text-orange-500 hover:underline">Sign up for free</Link>
-                            </p>
+                            <div className="space-y-1">
+                                <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Đăng nhập</h1>
+                                <p className="text-gray-500 dark:text-gray-400 text-sm">
+                                    Chưa có tài khoản? <Link href="/auth/register" className="font-medium text-orange-500 hover:underline">Đăng ký miễn phí</Link>
+                                </p>
+                            </div>
                         </div>
 
                         <form onSubmit={handleSubmit} className="space-y-6">
@@ -140,13 +141,13 @@ export default function LoginPage() {
                                 </div>
                             )}
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">Email or Phone Number</label>
+                                <label className="text-sm font-medium text-gray-700 dark:text-gray-200">Email hoặc Số điện thoại</label>
                                 <div className="relative">
                                     <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                                     <Input
                                         type="email"
                                         placeholder="youremail@gmail.com"
-                                        className="pl-10 h-12 bg-gray-50 border-gray-200"
+                                        className="pl-10 h-12 bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 focus-visible:ring-orange-500"
                                         required
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
@@ -156,9 +157,9 @@ export default function LoginPage() {
 
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between">
-                                    <label className="text-sm font-medium text-gray-700">Password</label>
+                                    <label className="text-sm font-medium text-gray-700 dark:text-gray-200">Mật khẩu</label>
                                     <Link href="/auth/forgot-password" className="text-xs font-medium text-orange-500 hover:underline">
-                                        Forgot password?
+                                        Quên mật khẩu?
                                     </Link>
                                 </div>
                                 <div className="relative">
@@ -166,7 +167,7 @@ export default function LoginPage() {
                                     <Input
                                         type={showPassword ? "text" : "password"}
                                         placeholder="••••••••"
-                                        className="pl-10 pr-10 h-12 bg-gray-50 border-gray-200"
+                                        className="pl-10 pr-10 h-12 bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 focus-visible:ring-orange-500"
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
@@ -181,8 +182,8 @@ export default function LoginPage() {
                                 </div>
                             </div>
 
-                            <Button type="submit" disabled={isLoading} className="w-full bg-orange-500 hover:bg-orange-600 text-white h-12 text-lg font-medium shadow-orange-200 shadow-lg">
-                                {isLoading ? "Logging in..." : "Login"}
+                            <Button type="submit" disabled={isLoading} className="w-full bg-orange-500 hover:bg-orange-600 text-white h-12 text-lg font-medium">
+                                {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
                             </Button>
                         </form>
 
@@ -191,7 +192,7 @@ export default function LoginPage() {
                                 <span className="w-full border-t border-gray-200" />
                             </div>
                             <div className="relative flex justify-center text-xs uppercase">
-                                <span className="bg-white px-2 text-gray-500">Or continue with</span>
+                                <span className="bg-white dark:bg-gray-900 px-2 text-gray-500 dark:text-gray-400">Hoặc tiếp tục với</span>
                             </div>
                         </div>
 
@@ -200,7 +201,7 @@ export default function LoginPage() {
                                 type="button"
                                 onClick={() => handleOAuthLogin('google')}
                                 variant="outline"
-                                className="h-12 border-gray-200 hover:bg-gray-50 bg-white text-gray-700"
+                                className="h-12 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300"
                             >
                                 <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
                                     <path
@@ -226,7 +227,7 @@ export default function LoginPage() {
                                 type="button"
                                 onClick={() => handleOAuthLogin('facebook')}
                                 variant="outline"
-                                className="h-12 border-gray-200 hover:bg-gray-50 bg-white text-gray-700"
+                                className="h-12 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300"
                             >
                                 <svg className="mr-2 h-5 w-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
@@ -235,11 +236,11 @@ export default function LoginPage() {
                             </Button>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <div className="absolute bottom-4 text-center text-xs text-gray-500 w-full lg:hidden">
-                © 2024 SmartBite. All rights reserved.
+                    <div className="mt-8 text-center text-xs text-gray-500 dark:text-gray-500">
+                        © 2024 SmartBite. Mọi quyền được bảo lưu.
+                    </div>
+                </div>
             </div>
         </div>
     );

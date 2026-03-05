@@ -22,7 +22,7 @@ export default function CartPage() {
     const [paymentMethod, setPaymentMethod] = useState("momo")
     const [isEditingAddress, setIsEditingAddress] = useState(false)
     const [addressTitle, setAddressTitle] = useState("Bitexco Office")
-    const [addressDetails, setAddressDetails] = useState("Floor 15, No 2 Hai Trieu, D.1, HCMC")
+    const [addressDetails, setAddressDetails] = useState("Tầng 15, số 2 Hai Bà Trưng, Quận 1, TP.HCM")
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [voucherCode, setVoucherCode] = useState("")
     const [availableVouchers, setAvailableVouchers] = useState<any[]>([])
@@ -35,7 +35,7 @@ export default function CartPage() {
             setIsLoggedIn(true);
             const user = JSON.parse(userStr);
             if (user.addressdelivery) {
-                setAddressTitle("Registered Address");
+                setAddressTitle("Địa chỉ đã đăng ký");
                 setAddressDetails(user.addressdelivery);
             }
 
@@ -55,7 +55,7 @@ export default function CartPage() {
                     setAvailableVouchers(data);
                 }
             } catch (err) {
-                console.error("Error fetching vouchers:", err);
+                console.error("Lỗi khi tải voucher:", err);
             }
         };
         fetchActiveVouchers();
@@ -111,7 +111,7 @@ export default function CartPage() {
                 window.dispatchEvent(new Event('cartUpdate'));
             }
         } catch (error) {
-            console.error("Failed to load cart from DB:", error);
+            console.error("Không thể tải giỏ hàng từ DB:", error);
             setCartItems([]);
         }
     }
@@ -144,7 +144,7 @@ export default function CartPage() {
                 alert("Không thể cập nhật số lượng.");
             }
         } catch (error) {
-            console.error("Update quantity error:", error);
+            console.error("Lỗi cập nhật số lượng:", error);
         }
     }
 
@@ -168,7 +168,7 @@ export default function CartPage() {
                 alert("Không thể xóa giỏ hàng.");
             }
         } catch (error) {
-            console.error("Failed to clear cart:", error);
+            console.error("Không thể xóa giỏ hàng:", error);
         }
     }
 
@@ -211,24 +211,24 @@ export default function CartPage() {
     if (!isMounted) return null
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col transition-colors duration-300">
             <Navbar />
 
             <main className="flex-grow container mx-auto px-4 py-8 max-w-7xl">
                 <div className="flex items-center gap-3 mb-8">
                     <ShoppingBag className="w-8 h-8 text-orange-500" />
-                    <h1 className="text-3xl font-bold text-gray-900">Giỏ hàng & Thanh toán</h1>
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Giỏ hàng & Thanh toán</h1>
                 </div>
 
                 <div className="grid lg:grid-cols-12 gap-8">
 
                     <div className="lg:col-span-8 space-y-8">
 
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6">
                             <div className="flex justify-between items-center mb-6">
                                 <div className="flex items-center gap-2">
-                                    <h2 className="text-xl font-bold text-gray-900">Đơn hàng của bạn</h2>
-                                    <span className="bg-orange-100 text-orange-600 text-sm font-medium px-2.5 py-0.5 rounded-full">
+                                    <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Đơn hàng của bạn</h2>
+                                    <span className="bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 text-sm font-medium px-2.5 py-0.5 rounded-full">
                                         {totalItems} món
                                     </span>
                                 </div>
@@ -245,11 +245,11 @@ export default function CartPage() {
 
                             {cartItems.length === 0 ? (
                                 <div className="text-center py-12">
-                                    <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <ShoppingBag className="w-10 h-10 text-gray-400" />
+                                    <div className="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <ShoppingBag className="w-10 h-10 text-gray-400 dark:text-gray-500" />
                                     </div>
-                                    <h3 className="text-lg font-medium text-gray-900 mb-2">Giỏ hàng trống</h3>
-                                    <p className="text-gray-500 mb-6">Bạn chưa chọn items ăn nào. Hãy khám phá thực đơn nhé!</p>
+                                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">Giỏ hàng trống</h3>
+                                    <p className="text-gray-500 dark:text-gray-400 mb-6">Bạn chưa chọn items ăn nào. Hãy khám phá thực đơn nhé!</p>
                                     <Link href="/menu">
                                         <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-8">
                                             Xem Thực đơn
@@ -259,15 +259,15 @@ export default function CartPage() {
                             ) : (
                                 <div className="space-y-6">
                                     {cartItems.map((item) => (
-                                        <div key={item.id} className="flex gap-4 items-start">
-                                            <div className="w-24 h-24 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0 relative">
+                                        <div key={item.id} className="flex gap-4 items-start border-b border-gray-50 dark:border-gray-800 pb-6 last:border-0 last:pb-0">
+                                            <div className="w-24 h-24 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0 relative">
                                                 <img
                                                     src={item.image || "/images/placeholder.jpg"}
                                                     alt={item.title}
                                                     className="w-full h-full object-cover"
                                                 />
                                                 {item.rating && (
-                                                    <div className="absolute top-1 left-1 bg-white/90 backdrop-blur-sm text-xs px-1.5 py-0.5 rounded-md font-medium flex items-center gap-1 shadow-sm">
+                                                    <div className="absolute top-1 left-1 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm text-xs px-1.5 py-0.5 rounded-md font-medium flex items-center gap-1 shadow-sm">
                                                         <span className="text-yellow-400 text-[10px]">★</span>
                                                         {item.rating}
                                                     </div>
@@ -276,46 +276,46 @@ export default function CartPage() {
 
                                             <div className="flex-grow min-w-0">
                                                 <div className="flex justify-between items-start mb-1">
-                                                    <h3 className="font-semibold text-lg text-gray-900 truncate pr-4">{item.title}</h3>
+                                                    <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100 truncate pr-4">{item.title}</h3>
                                                     <div className="font-bold text-orange-500 whitespace-nowrap">
                                                         {formatPrice(parsePrice(item.price) * (item.quantity || 1) + parsePrice(item.extraPrice || 0))}
                                                     </div>
                                                 </div>
-                                                <p className="text-sm text-gray-500 mb-3 line-clamp-2">{item.desc || item.title}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400 mb-3 line-clamp-2">{item.desc || item.title}</p>
 
                                                 <div className="flex items-center justify-between">
                                                     <div className="flex flex-wrap items-center gap-3 text-xs">
                                                         {item.calories && (
-                                                            <div className="flex items-center text-orange-600 bg-orange-50 px-2 py-1 rounded-md font-medium">
+                                                            <div className="flex items-center text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/20 px-2 py-1 rounded-md font-medium">
                                                                 <Flame className="w-3.5 h-3.5 mr-1" />
                                                                 {item.calories}
                                                             </div>
                                                         )}
                                                         {item.time && (
-                                                            <div className="flex items-center text-gray-600 bg-gray-50 px-2 py-1 rounded-md font-medium">
-                                                                <Clock className="w-3.5 h-3.5 mr-1 text-gray-400" />
+                                                            <div className="flex items-center text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 px-2 py-1 rounded-md font-medium">
+                                                                <Clock className="w-3.5 h-3.5 mr-1 text-gray-400 dark:text-gray-500" />
                                                                 {item.time}
                                                             </div>
                                                         )}
                                                         {item.category === "Food" && (
-                                                            <div className="flex items-center text-green-600 bg-green-50 px-2 py-1 rounded-md font-medium hidden sm:flex">
+                                                            <div className="flex items-center text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-md font-medium hidden sm:flex">
                                                                 <Sparkles className="w-3.5 h-3.5 mr-1" />
                                                                 Lành mạnh
                                                             </div>
                                                         )}
                                                     </div>
 
-                                                    <div className="flex items-center border border-gray-200 rounded-lg bg-white shadow-sm">
+                                                    <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 shadow-sm">
                                                         <button
                                                             onClick={() => updateQuantity(item.id, -1)}
-                                                            className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-orange-500 hover:bg-orange-50 rounded-l-lg transition-colors"
+                                                            className="w-8 h-8 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-l-lg transition-colors"
                                                         >
                                                             <Minus className="w-3.5 h-3.5" />
                                                         </button>
-                                                        <span className="w-8 text-center font-medium text-gray-900 text-sm">{item.quantity}</span>
+                                                        <span className="w-8 text-center font-medium text-gray-900 dark:text-gray-100 text-sm">{item.quantity}</span>
                                                         <button
                                                             onClick={() => updateQuantity(item.id, 1)}
-                                                            className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-orange-500 hover:bg-orange-50 rounded-r-lg transition-colors"
+                                                            className="w-8 h-8 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-r-lg transition-colors"
                                                         >
                                                             <Plus className="w-3.5 h-3.5" />
                                                         </button>
@@ -333,13 +333,13 @@ export default function CartPage() {
 
 
                     <div className="lg:col-span-4">
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-24">
-                            <h2 className="text-xl font-bold text-gray-900 mb-6">Thông tin Thanh toán</h2>
+                        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6 sticky top-24">
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">Thông tin Thanh toán</h2>
 
 
                             <div className="mb-6">
                                 <div className="flex justify-between items-center mb-3">
-                                    <span className="text-xs font-bold text-gray-500 tracking-wider uppercase">Địa chỉ Giao hàng</span>
+                                    <span className="text-xs font-bold text-gray-500 dark:text-gray-400 tracking-wider uppercase">Địa chỉ Giao hàng</span>
                                     <button
                                         onClick={() => {
                                             if (isEditingAddress) {
@@ -373,9 +373,9 @@ export default function CartPage() {
                                         {isEditingAddress ? "Lưu" : "Thay đổi"}
                                     </button>
                                 </div>
-                                <div className="flex gap-3 bg-orange-50/50 p-3 rounded-xl border border-orange-100">
-                                    <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
-                                        <MapPin className="w-4 h-4 text-orange-600" />
+                                <div className="flex gap-3 bg-orange-50/50 dark:bg-orange-950/20 p-3 rounded-xl border border-orange-100 dark:border-orange-900/30">
+                                    <div className="w-8 h-8 rounded-full bg-orange-100 dark:bg-orange-900/50 flex items-center justify-center flex-shrink-0">
+                                        <MapPin className="w-4 h-4 text-orange-600 dark:text-orange-400" />
                                     </div>
                                     <div className="flex-1 w-full">
                                         {isEditingAddress ? (
@@ -384,21 +384,21 @@ export default function CartPage() {
                                                     type="text"
                                                     value={addressTitle}
                                                     onChange={(e) => setAddressTitle(e.target.value)}
-                                                    className="w-full bg-white border border-orange-200 rounded px-2 py-1 text-sm font-semibold text-gray-900 focus:outline-none focus:border-orange-500"
+                                                    className="w-full bg-white dark:bg-gray-800 border border-orange-200 dark:border-orange-800 rounded px-2 py-1 text-sm font-semibold text-gray-900 dark:text-gray-100 focus:outline-none focus:border-orange-500"
                                                     placeholder="Location name (e.g., Home)"
                                                 />
                                                 <input
                                                     type="text"
                                                     value={addressDetails}
                                                     onChange={(e) => setAddressDetails(e.target.value)}
-                                                    className="w-full bg-white border border-orange-200 rounded px-2 py-1 text-xs text-gray-700 focus:outline-none focus:border-orange-500"
+                                                    className="w-full bg-white dark:bg-gray-800 border border-orange-200 dark:border-orange-800 rounded px-2 py-1 text-xs text-gray-700 dark:text-gray-300 focus:outline-none focus:border-orange-500"
                                                     placeholder="Chi tiết địa chỉ"
                                                 />
                                             </div>
                                         ) : (
                                             <div>
-                                                <div className="font-semibold text-gray-900 text-sm mb-0.5">{addressTitle}</div>
-                                                <div className="text-xs text-gray-500">{addressDetails}</div>
+                                                <div className="font-semibold text-gray-900 dark:text-gray-100 text-sm mb-0.5">{addressTitle}</div>
+                                                <div className="text-xs text-gray-500 dark:text-gray-400">{addressDetails}</div>
                                             </div>
                                         )}
                                     </div>
@@ -407,28 +407,28 @@ export default function CartPage() {
 
 
                             <div className="mb-6">
-                                <span className="text-xs font-bold text-gray-500 tracking-wider uppercase mb-3 block">Phương thức Thanh toán</span>
+                                <span className="text-xs font-bold text-gray-500 dark:text-gray-400 tracking-wider uppercase mb-3 block">Phương thức Thanh toán</span>
                                 <div className="space-y-3">
-                                    <label className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${paymentMethod === 'bankqr' ? 'border-orange-400 bg-orange-50/30' : 'border-gray-200 hover:bg-gray-50'}`}>
+                                    <label className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${paymentMethod === 'bankqr' ? 'border-orange-400 bg-orange-50/30 dark:bg-orange-950/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50'}`}>
                                         <div className={`relative flex items-center justify-center content-center w-5 h-5 rounded-full border-2 ${paymentMethod === 'bankqr' ? 'border-orange-400' : 'border-gray-300'}`}>
                                             {paymentMethod === 'bankqr' && <div className="w-2.5 h-2.5 bg-orange-500 rounded-full" />}
                                         </div>
                                         <input type="radio" className="hidden" name="payment" value="bankqr" checked={paymentMethod === 'bankqr'} onChange={() => setPaymentMethod('bankqr')} />
-                                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                                            <QrCode className="w-4 h-4 text-blue-600" />
+                                        <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center">
+                                            <QrCode className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                                         </div>
-                                        <span className="font-medium text-gray-900 text-sm flex-1">QR Ngân hàng</span>
+                                        <span className="font-medium text-gray-900 dark:text-gray-100 text-sm flex-1">QR Ngân hàng</span>
                                     </label>
 
-                                    <label className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${paymentMethod === 'cash' ? 'border-orange-400 bg-orange-50/30' : 'border-gray-200 hover:bg-gray-50'}`}>
+                                    <label className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${paymentMethod === 'cash' ? 'border-orange-400 bg-orange-50/30 dark:bg-orange-950/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50'}`}>
                                         <div className={`relative flex items-center justify-center content-center w-5 h-5 rounded-full border-2 ${paymentMethod === 'cash' ? 'border-orange-400' : 'border-gray-300'}`}>
                                             {paymentMethod === 'cash' && <div className="w-2.5 h-2.5 bg-orange-500 rounded-full" />}
                                         </div>
                                         <input type="radio" className="hidden" name="payment" value="cash" checked={paymentMethod === 'cash'} onChange={() => setPaymentMethod('cash')} />
-                                        <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                                            <Banknote className="w-4 h-4 text-green-600" />
+                                        <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center">
+                                            <Banknote className="w-4 h-4 text-green-600 dark:text-green-400" />
                                         </div>
-                                        <span className="font-medium text-gray-900 text-sm flex-1">Tiền mặt</span>
+                                        <span className="font-medium text-gray-900 dark:text-gray-100 text-sm flex-1">Tiền mặt</span>
                                     </label>
                                 </div>
                             </div>
@@ -437,11 +437,11 @@ export default function CartPage() {
 
 
                             <div className="mb-6">
-                                <span className="text-xs font-bold text-gray-500 tracking-wider uppercase mb-3 block">Mã giảm giá</span>
+                                <span className="text-xs font-bold text-gray-500 dark:text-gray-400 tracking-wider uppercase mb-3 block">Mã giảm giá</span>
                                 <div className="flex gap-2">
                                     <Input
                                         placeholder="Nhập hoặc chọn mã..."
-                                        className="bg-white border-gray-200 focus-visible:ring-orange-500/20 font-medium flex-1 h-11 rounded-xl uppercase"
+                                        className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus-visible:ring-orange-500/20 font-medium flex-1 h-11 rounded-xl uppercase"
                                         value={voucherCode}
                                         onChange={(e) => setVoucherCode(e.target.value.toUpperCase())}
                                     />
@@ -481,7 +481,7 @@ export default function CartPage() {
                                                     alert(data.error || "Mã voucher không hợp lệ.");
                                                 }
                                             } catch (error) {
-                                                console.error("Voucher validation error:", error);
+                                                console.error("Voucher không hợp lệ: ", error);
                                                 alert("Lỗi khi kiểm tra mã voucher.");
                                             }
                                         }}
@@ -490,8 +490,8 @@ export default function CartPage() {
                                     </Button>
                                 </div>
                                 {appliedVoucher && (
-                                    <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between">
-                                        <div className="flex items-center gap-2 text-green-700">
+                                    <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-900/30 rounded-lg flex items-center justify-between">
+                                        <div className="flex items-center gap-2 text-green-700 dark:text-green-400">
                                             <Ticket className="w-4 h-4" />
                                             <span className="text-sm font-semibold">Đã áp dụng: {appliedVoucher.vouchercode}</span>
                                         </div>
@@ -506,12 +506,12 @@ export default function CartPage() {
 
                                 {availableVouchers.length > 0 && !appliedVoucher && (
                                     <div className="mt-3 space-y-2">
-                                        <p className="text-xs text-gray-500 font-medium mb-1">Mã khả dụng:</p>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mb-1">Mã khả dụng:</p>
                                         <div className="flex flex-wrap gap-2">
                                             {availableVouchers.map(v => (
                                                 <button
                                                     key={v.voucherid}
-                                                    className="border border-orange-200 bg-orange-50/50 hover:bg-orange-100 text-orange-700 text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors"
+                                                    className="border border-orange-200 dark:border-orange-800 bg-orange-50/50 dark:bg-orange-950/20 hover:bg-orange-100 dark:hover:bg-orange-900/40 text-orange-700 dark:text-orange-400 text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors"
                                                     onClick={() => {
                                                         setVoucherCode(v.vouchercode);
                                                     }}
@@ -530,8 +530,8 @@ export default function CartPage() {
 
                             <div className="space-y-3 mb-6">
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-gray-500">Shipping</span>
-                                    <span className="font-medium text-gray-900">{formatPrice(shippingFee)}</span>
+                                    <span className="text-gray-500 dark:text-gray-400">Phí vận chuyển</span>
+                                    <span className="font-medium text-gray-900 dark:text-gray-100">{formatPrice(shippingFee)}</span>
                                 </div>
                                 {appliedVoucher && (
                                     <div className="flex justify-between text-sm">
@@ -541,20 +541,20 @@ export default function CartPage() {
                                         <span className="font-medium text-orange-600">-{formatPrice(voucherDiscount)}</span>
                                     </div>
                                 )}
-                                <Separator className="my-3 border-gray-100" />
+                                <Separator className="my-3 border-gray-100 dark:border-gray-800" />
                                 <div className="flex justify-between text-base font-bold">
-                                    <span className="text-gray-500">Total Discount</span>
-                                    <span className="font-medium text-green-600">-{formatPrice(totalDiscount)}</span>
+                                    <span className="text-gray-500 dark:text-gray-400">Tổng giảm giá</span>
+                                    <span className="font-medium text-green-600 dark:text-green-400">-{formatPrice(totalDiscount)}</span>
                                 </div>
                             </div>
 
 
                             {cartItems.length > 0 && (
-                                <div className="bg-blue-50/50 rounded-xl p-3 border border-blue-100 mb-6 flex gap-3">
-                                    <Info className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                                <div className="bg-blue-50/50 dark:bg-blue-950/20 rounded-xl p-3 border border-blue-100 dark:border-blue-900/30 mb-6 flex gap-3">
+                                    <Info className="w-5 h-5 text-blue-500 dark:text-blue-400 flex-shrink-0 mt-0.5" />
                                     <div>
-                                        <div className="text-xs font-semibold text-blue-800 mb-1">Tổng Dinh dưỡng</div>
-                                        <div className="text-xs text-blue-600 leading-relaxed font-medium">
+                                        <div className="text-xs font-semibold text-blue-800 dark:text-blue-300 mb-1">Tổng Dinh dưỡng</div>
+                                        <div className="text-xs text-blue-600 dark:text-blue-400 leading-relaxed font-medium">
                                             {totalCalories} kcal • {Math.round(totalCalories * 0.05)}g pr • {Math.round(totalCalories * 0.12)}g cb
                                         </div>
                                     </div>
@@ -566,13 +566,13 @@ export default function CartPage() {
                                 <div className="text-2xl font-bold text-orange-500">
                                     {formatPrice(total)}
                                 </div>
-                                <div className="text-[10px] text-gray-400 mt-1 uppercase tracking-wide">
+                                <div className="text-[10px] text-gray-400 dark:text-gray-500 mt-1 uppercase tracking-wide">
                                     (Đã bao gồm VAT)
                                 </div>
                             </div>
 
                             <Button
-                                className="w-full h-14 rounded-2xl text-lg font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-xl shadow-orange-200"
+                                className="w-full h-14 rounded-2xl text-lg font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-xl shadow-orange-200 dark:shadow-orange-900/20"
                                 disabled={cartItems.length === 0 || !isLoggedIn}
                                 onClick={async () => {
                                     if (!isLoggedIn) {
@@ -603,7 +603,12 @@ export default function CartPage() {
                                             setCartItems([]);
                                             setAppliedVoucher(null);
                                             window.dispatchEvent(new Event('cartUpdate'));
-                                            router.push(`/checkout/qr?orderId=${data.orderId}`);
+
+                                            if (paymentMethod === 'cash') {
+                                                router.push(`/order/${data.orderId}`);
+                                            } else {
+                                                router.push(`/checkout/qr?orderId=${data.orderId}`);
+                                            }
                                         } else {
                                             alert(`Lỗi đặt hàng: ${data.error || "Không rõ nguyên nhân"}`);
                                         }
@@ -613,7 +618,7 @@ export default function CartPage() {
                                     }
                                 }}
                             >
-                                {isLoggedIn ? "Place Order Now" : "Login to Order"}
+                                {isLoggedIn ? "Đặt ngay" : "Đăng nhập"}
                                 <ChevronRight className="w-5 h-5 ml-2" />
                             </Button>
                         </div>

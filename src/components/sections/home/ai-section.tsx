@@ -37,14 +37,14 @@ export function AISection() {
                     <div className="relative">
                         <div className="absolute -inset-4 bg-orange-500/20 blur-3xl rounded-full" />
 
-                        <div className="relative bg-white rounded-2xl p-6 shadow-2xl max-w-md mx-auto">
+                        <div className="relative bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-2xl max-w-md mx-auto">
 
-                            <div className="flex items-center gap-3 border-b border-gray-100 pb-4 mb-4">
-                                <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-primary">
+                            <div className="flex items-center gap-3 border-b border-gray-100 dark:border-gray-800 pb-4 mb-4">
+                                <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center text-primary">
                                     <Bot className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-gray-900">SmartBite AI</h3>
+                                    <h3 className="font-bold text-gray-900 dark:text-gray-100">SmartBite AI</h3>
                                     <div className="flex items-center gap-1.5">
                                         <span className="relative flex h-2 w-2">
                                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -62,7 +62,7 @@ export function AISection() {
                                     <div className="w-8 h-8 bg-orange-50 rounded-full flex items-center justify-center flex-shrink-0 text-primary mt-1">
                                         <Bot className="w-4 h-4" />
                                     </div>
-                                    <div className="bg-gray-100 p-3 rounded-2xl rounded-tl-none text-sm text-gray-600">
+                                    <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-2xl rounded-tl-none text-sm text-gray-600 dark:text-gray-300">
                                         Xin chào! Tôi là SmartBite AI. Bạn đang tìm kiếm món ăn như thế nào hôm nay?
                                     </div>
                                 </div>
@@ -76,11 +76,11 @@ export function AISection() {
 
 
                                 <div className="flex gap-3">
-                                    <div className="w-8 h-8 bg-orange-50 rounded-full flex items-center justify-center flex-shrink-0 text-primary mt-1">
+                                    <div className="w-8 h-8 bg-orange-50 dark:bg-orange-900/30 rounded-full flex items-center justify-center flex-shrink-0 text-primary mt-1">
                                         <Bot className="w-4 h-4" />
                                     </div>
-                                    <div className="bg-gray-100 p-3 rounded-2xl rounded-tl-none text-sm text-gray-600">
-                                        Tuyệt vời! Tôi gợi ý món <span className="font-bold text-orange-600">Salad Quinoa Bơ</span> (280 kcal) - giàu protein và cực kỳ lành mạnh! 🥑
+                                    <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-2xl rounded-tl-none text-sm text-gray-600 dark:text-gray-300">
+                                        Tuyệt vời! Tôi gợi ý món <span className="font-bold text-orange-600 dark:text-orange-400">Salad Quinoa Bơ</span> (280 kcal) - giàu protein và cực kỳ lành mạnh! 🥑
                                     </div>
                                 </div>
                             </div>
@@ -90,7 +90,7 @@ export function AISection() {
                                 <input
                                     type="text"
                                     placeholder="AI đang gợi ý thêm..."
-                                    className="w-full bg-gray-50 border border-gray-100 rounded-full py-3 px-4 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                                    className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-full py-3 px-4 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 dark:text-gray-200"
                                 />
                                 <button className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-primary hover:bg-orange-50 rounded-full transition-colors">
                                     <Send className="w-4 h-4" />
