@@ -192,12 +192,12 @@ export function ReviewDialog({ orderId, orderItems = [], triggerElement, onRevie
                     <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-8 text-white relative">
                         <DialogHeader>
                             <DialogTitle className="text-2xl font-bold text-white">
-                                {justSubmitted ? "Cảm ơn bạn!" : "Đánh giá trải nghiệm"}
+                                {justSubmitted ? "Cảm ơn bạn!" : "Đánh giá đơn hàng"}
                             </DialogTitle>
                             <DialogDescription className="text-orange-100 text-base">
                                 {justSubmitted
                                     ? "Ý kiến của bạn giúp chúng tôi cải thiện dịch vụ tốt hơn."
-                                    : `Bạn cảm thấy đơn hàng #${displayOrderId} thế nào?`}
+                                    : type === 'dish' ? "Bạn cảm thấy món ăn này như thế nào?" : "Bạn cảm thấy đơn hàng như thế nào?"}
                             </DialogDescription>
                         </DialogHeader>
                         <div className="absolute -bottom-6 right-8 w-12 h-12 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg">
@@ -218,7 +218,7 @@ export function ReviewDialog({ orderId, orderItems = [], triggerElement, onRevie
                                     <section className="space-y-4">
                                         <div className="flex items-center gap-2 mb-2">
                                             <div className="w-1 h-6 bg-orange-500 rounded-full"></div>
-                                            <h4 className="font-bold text-gray-900 dark:text-gray-100 text-lg">Đánh giá chung</h4>
+                                            <h4 className="font-bold text-gray-900 dark:text-gray-100 text-lg">Đánh giá đơn hàng</h4>
                                         </div>
 
                                         <div className="bg-orange-50/50 dark:bg-orange-900/10 p-6 rounded-3xl border border-orange-100/50 dark:border-orange-900/20">

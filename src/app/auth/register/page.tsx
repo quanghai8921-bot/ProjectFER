@@ -215,7 +215,7 @@ export default function RegisterPage() {
                                 <div className="relative">
                                     <Input
                                         type="date"
-                                        className="h-12 bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 focus-visible:ring-orange-500 px-4 transition-colors"
+                                        className="h-12 bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 focus-visible:ring-orange-500 px-3 py-2 text-sm sm:text-base transition-colors w-full"
                                         required
                                         value={birthdate}
                                         onChange={(e) => setBirthdate(e.target.value)}

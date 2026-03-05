@@ -310,10 +310,12 @@ export default function QRPaymentPage() {
                             <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 leading-relaxed">
                                 Nếu bạn gặp bất kỳ khó khăn nào trong quá trình thanh toán, vui lòng liên hệ với chúng tôi.
                             </p>
-                            <Button className="w-full bg-[#111827] hover:bg-black text-white rounded-xl h-12 font-bold shadow-md">
-                                <Headset className="w-4 h-4 mr-2" />
-                                Hỗ trợ 24/7
-                            </Button>
+                            <Link href="https://www.facebook.com/tfonghjhj" target="_blank" rel="noopener noreferrer">
+                                <Button className="w-full bg-[#111827] hover:bg-black text-white rounded-xl h-12 font-bold shadow-md">
+                                    <Headset className="w-4 h-4 mr-2" />
+                                    Hỗ trợ 24/7
+                                </Button>
+                            </Link>
                         </div>
                     </div>
                 </div>
