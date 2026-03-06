@@ -137,7 +137,6 @@ export default function OrderManagement() {
                         <table className="w-full text-left">
                             <thead>
                                 <tr className="border-b border-gray-50 dark:border-gray-800">
-                                    <th className="px-6 py-4 text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Mã đơn hàng</th>
                                     <th className="px-6 py-4 text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Khách hàng</th>
                                     <th className="px-6 py-4 text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Sản phẩm</th>
                                     <th className="px-6 py-4 text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Tổng cộng</th>
@@ -149,9 +148,6 @@ export default function OrderManagement() {
                             <tbody>
                                 {filteredOrders.map((order) => (
                                     <tr key={order.id} className="border-b border-gray-50 dark:border-gray-800 last:border-0 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors">
-                                        <td className="px-6 py-5">
-                                            <span className="text-sm font-bold text-orange-600 dark:text-orange-400">#{order.id}</span>
-                                        </td>
                                         <td className="px-6 py-5">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm">
@@ -192,7 +188,6 @@ export default function OrderManagement() {
                                         </div>
                                         <div>
                                             <div className="font-bold text-gray-900 dark:text-gray-100">{order.customer}</div>
-                                            <div className="text-xs text-orange-600 dark:text-orange-400 font-bold">#{order.id}</div>
                                         </div>
                                     </div>
                                     <StatusBadge status={order.status} paymentStatus={order.paymentStatus} />
