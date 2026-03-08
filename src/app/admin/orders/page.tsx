@@ -38,6 +38,7 @@ export default function OrderManagement() {
 
                         const paymentInfo = Array.isArray(o.payments) ? (o.payments.length > 0 ? o.payments[0] : null) : o.payments;
                         const pStatus = paymentInfo?.paymentstatus || 'pending';
+                        const pMethod = paymentInfo?.paymentmethod || 'cash';
 
                         return {
                             id: o.orderid,
@@ -51,6 +52,7 @@ export default function OrderManagement() {
                             time: formatVnDateTime(o.ordertime),
                             status: status,
                             paymentStatus: pStatus,
+                            paymentMethod: pMethod,
                             avatar: "/images/avatar-placeholder.jpg"
                         };
                     });
@@ -166,7 +168,7 @@ export default function OrderManagement() {
                                             <span className="text-sm text-gray-500 dark:text-gray-400">{order.time}</span>
                                         </td>
                                         <td className="px-6 py-5">
-                                            <StatusBadge status={order.status} paymentStatus={order.paymentStatus} />
+                                            <StatusBadge status={order.status} paymentStatus={order.paymentStatus} paymentMethod={order.paymentMethod} />
                                         </td>
                                         <td className="px-6 py-5 text-center">
                                             <ActionButtons order={order} updateOrderStatus={updateOrderStatus} />
@@ -190,7 +192,7 @@ export default function OrderManagement() {
                                             <div className="font-bold text-gray-900 dark:text-gray-100">{order.customer}</div>
                                         </div>
                                     </div>
-                                    <StatusBadge status={order.status} paymentStatus={order.paymentStatus} />
+                                    <StatusBadge status={order.status} paymentStatus={order.paymentStatus} paymentMethod={order.paymentMethod} />
                                 </div>
                                 <div className="space-y-1">
                                     <div className="text-sm text-gray-600 dark:text-gray-400"><span className="font-medium">Món:</span> {order.items}</div>
@@ -212,13 +214,13 @@ export default function OrderManagement() {
 }
 
 // Helper components to reduce duplication and improve readability
-const StatusBadge = ({ status, paymentStatus }: { status: string, paymentStatus: string }) => {
+const StatusBadge = ({ status, paymentStatus, paymentMethod }: { status: string, paymentStatus: string, paymentMethod?: string }) => {
     if (status === 'cancelled') return (
         <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 border border-red-200 dark:border-red-800">Đã hủy</span>
     );
     if (status === 'pending') return (
         <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${paymentStatus === 'completed' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 border border-green-200 dark:border-green-800' : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400'}`}>
-            {paymentStatus === 'completed' ? 'Đã thanh toán' : 'Chờ thanh toán QR'}
+            {paymentStatus === 'completed' ? 'Đã thanh toán' : (paymentMethod === 'cash' ? 'Chờ thanh toán tiền mặt' : 'Chờ thanh toán QR')}
         </span>
     );
     if (status === 'accepted') return (
@@ -241,7 +243,7 @@ const ActionButtons = ({ order, updateOrderStatus, mobile = false }: { order: an
     const buttonClasses = mobile ? "flex-1 py-2.5" : "px-4 py-2";
 
     if (order.status === 'pending') {
-        if (order.paymentStatus === 'completed') {
+        if (order.paymentStatus === 'completed' || order.paymentMethod === 'cash') {
             return (
                 <div className={containerClasses}>
                     <button onClick={() => updateOrderStatus(order.id, 'accepted')} className={`inline-flex items-center justify-center font-bold text-xs bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors shadow-sm ${buttonClasses}`}>Xác nhận đơn hàng</button>
