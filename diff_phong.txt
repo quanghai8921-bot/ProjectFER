@@ -1,0 +1,223 @@
+﻿diff --git a/src/app/admin/menu/page.tsx b/src/app/admin/menu/page.tsx
+index f09407d..b9ad49b 100644
+--- a/src/app/admin/menu/page.tsx
++++ b/src/app/admin/menu/page.tsx
+@@ -479,6 +479,37 @@ export default function MenuManagement() {
+                                         ))}
+                                     </div>
+                                 </div>
++                                {editingDishId && (
++                                    <div className="space-y-3">
++                                        <Label className="text-base font-semibold">Trß║íng th├íi hiß╗ân thß╗ï</Label>
++                                        <div className="flex gap-2">
++                                            <Button
++                                                type="button"
++                                                variant={newDish.foodstatus === "Available" ? "default" : "outline"}
++                                                className={newDish.foodstatus === "Available" ? "bg-green-600 hover:bg-green-700" : ""}
++                                                onClick={() => setNewDish(prev => ({ ...prev, foodstatus: "Available" }))}
++                                            >
++                                                C├▓n m├│n
++                                            </Button>
++                                            <Button
++                                                type="button"
++                                                variant={newDish.foodstatus === "Out of Stock" ? "default" : "outline"}
++                                                className={newDish.foodstatus === "Out of Stock" ? "bg-yellow-600 hover:bg-yellow-700" : ""}
++                                                onClick={() => setNewDish(prev => ({ ...prev, foodstatus: "Out of Stock" }))}
++                                            >
++                                                Hß║┐t m├│n
++                                            </Button>
++                                            <Button
++                                                type="button"
++                                                variant={newDish.foodstatus === "Unavailable" ? "default" : "outline"}
++                                                className={newDish.foodstatus === "Unavailable" ? "bg-red-600 hover:bg-red-700" : ""}
++                                                onClick={() => setNewDish(prev => ({ ...prev, foodstatus: "Unavailable" }))}
++                                            >
++                                                Ngß╗½ng b├ín
++                                            </Button>
++                                        </div>
++                                    </div>
++                                )}
+                             </div>
+ 
+ 
+diff --git a/src/app/ai-advisor/page.tsx b/src/app/ai-advisor/page.tsx
+index dcef171..2f787ad 100644
+--- a/src/app/ai-advisor/page.tsx
++++ b/src/app/ai-advisor/page.tsx
+@@ -259,7 +259,7 @@ export default function AIAdvisorPage() {
+         } else {
+             const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+             const recognition = new SpeechRecognition();
+-            recognition.continuous = false;
++            recognition.continuous = true;
+             recognition.interimResults = true;
+             recognition.lang = 'vi-VN';
+ 
+diff --git a/src/app/api/payments/route.ts b/src/app/api/payments/route.ts
+deleted file mode 100644
+index e4ae3b4..0000000
+--- a/src/app/api/payments/route.ts
++++ /dev/null
+@@ -1,32 +0,0 @@
+-import { NextResponse } from 'next/server';
+-import { createClient } from '@/utils/supabase/server';
+-import { formatToDb } from '@/utils/date-utils';
+-
+-export async function POST(request: Request) {
+-    try {
+-        const supabase = await createClient();
+-        const body = await request.json();
+-        const { orderid, paymentstatus } = body;
+-
+-        if (!orderid) {
+-            return NextResponse.json({ error: 'Missing orderid' }, { status: 400 });
+-        }
+-
+-        const { error } = await supabase
+-            .from('payments')
+-            .update({
+-                paymentstatus: paymentstatus || 'completed',
+-                paymentdate: formatToDb()
+-            })
+-            .eq('orderid', orderid);
+-
+-        if (error) throw error;
+-
+-
+-
+-        return NextResponse.json({ success: true });
+-
+-    } catch (error: any) {
+-        return NextResponse.json({ error: error.message }, { status: 500 });
+-    }
+-}
+diff --git a/src/app/dishes/[id]/page.tsx b/src/app/dishes/[id]/page.tsx
+index d29055c..2c21027 100644
+--- a/src/app/dishes/[id]/page.tsx
++++ b/src/app/dishes/[id]/page.tsx
+@@ -221,7 +221,7 @@ export default function DishPage() {
+                         <ReviewDialog
+                             orderId={eligibility.orderId!}
+                             type="dish"
+-                            orderItems={eligibility.orderItems}
++                            orderItems={eligibility.orderItems.filter((item: any) => item.foodid === (dish?.foodid || id))}
+                             triggerElement={
+                                 <div className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-4 rounded-2xl transition-all active:scale-95 flex items-center gap-2 cursor-pointer">
+                                     <Star className="w-5 h-5 fill-white" />
+diff --git a/src/app/menu/page.tsx b/src/app/menu/page.tsx
+index 42ad862..b88d145 100644
+--- a/src/app/menu/page.tsx
++++ b/src/app/menu/page.tsx
+@@ -88,6 +88,8 @@ function MenuContent() {
+     const [selectedFlavors, setSelectedFlavors] = useState<string[]>([]);
+     const [isPersonalized, setIsPersonalized] = useState(false);
+ 
++    const [searchQuery, setSearchQuery] = useState("");
++
+     useEffect(() => {
+         if (categoryParam) {
+             setSelectedCategory(categoryParam);
+@@ -163,10 +165,11 @@ function MenuContent() {
+             matchPersonalized = (itemCategories.includes("Food") || itemCategories.includes("mon-chinh") || itemCategories.includes("suc-khoe")) && cals > 0 && cals < 600;
+         }
+ 
++        const matchSearch = searchQuery === "" || item.title.toLowerCase().includes(searchQuery.toLowerCase()) || (item.desc && item.desc.toLowerCase().includes(searchQuery.toLowerCase()));
+ 
+         if (item.foodstatus === "Unavailable") return false;
+ 
+-        return matchCategory && matchBalance && matchDiets && matchAllergies && matchFlavors && matchPersonalized;
++        return matchCategory && matchBalance && matchDiets && matchAllergies && matchFlavors && matchPersonalized && matchSearch;
+     });
+ 
+     return (
+@@ -178,7 +181,13 @@ function MenuContent() {
+                 <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+                     <div className="flex items-center gap-2 text-gray-400 w-full max-w-md bg-gray-50 dark:bg-gray-800 rounded-full px-4 py-2 border border-gray-100 dark:border-gray-700 focus-within:ring-2 focus-within:ring-orange-100 transition-all">
+                         <Search className="w-5 h-5" />
+-                        <input type="text" placeholder="T├¼m kiß║┐m m├│n ─ân gi├áu Protein..." className="bg-transparent border-none outline-none w-full text-sm text-gray-700 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-500" />
++                        <input
++                            type="text"
++                            placeholder="T├¼m kiß║┐m m├│n ─ân gi├áu Protein..."
++                            className="bg-transparent border-none outline-none w-full text-sm text-gray-700 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-500"
++                            value={searchQuery}
++                            onChange={(e) => setSearchQuery(e.target.value)}
++                        />
+                         <Zap className="w-4 h-4 text-orange-500" />
+                     </div>
+                 </div>
+diff --git a/src/app/order/[id]/page.tsx b/src/app/order/[id]/page.tsx
+index 2eef78e..b60def2 100644
+--- a/src/app/order/[id]/page.tsx
++++ b/src/app/order/[id]/page.tsx
+@@ -195,7 +195,7 @@ export default function OrderTrackingPage() {
+                             {currentStatus === 'completed' && params.id && (
+                                 <ReviewDialog
+                                     orderId={params.id as string}
+-                                    type="order"
++                                    type="all"
+                                     orderItems={currentOrder?.cartDetails?.map((item: any) => ({
+                                         foodid: item.id,
+                                         quantity: item.quantity,
+@@ -226,8 +226,8 @@ export default function OrderTrackingPage() {
+                                 <div className="absolute left-6 md:left-[10%] md:right-[10%] top-6 bottom-6 md:bottom-auto md:h-1 w-1 md:w-auto bg-gray-100 dark:bg-gray-800 rounded-full -z-10"></div>
+                                 <div
+                                     className={`absolute left-6 md:left-[10%] top-6 w-1 md:h-1 rounded-full -z-10 transition-all duration-700 ease-in-out ${['─æang chß╗¥', '─æ├ú x├íc nhß║¡n'].includes(currentStatus) ? 'h-0 md:w-0' :
+-                                            currentStatus === '─æang chuß║⌐n bß╗ï' ? 'h-[40%] md:w-[40%] bg-orange-400' :
+-                                                ['─æang giao', '─æ├ú ho├án th├ánh'].includes(currentStatus) ? 'h-[90%] md:w-[80%] bg-green-500' : 'h-0 md:w-0'
++                                        currentStatus === '─æang chuß║⌐n bß╗ï' ? 'h-[40%] md:w-[40%] bg-orange-400' :
++                                            ['─æang giao', '─æ├ú ho├án th├ánh'].includes(currentStatus) ? 'h-[90%] md:w-[80%] bg-green-500' : 'h-0 md:w-0'
+                                         }`}
+                                 ></div>
+ 
+diff --git a/src/app/profile/history/page.tsx b/src/app/profile/history/page.tsx
+index 0b1328d..69fe5fc 100644
+--- a/src/app/profile/history/page.tsx
++++ b/src/app/profile/history/page.tsx
+@@ -170,7 +170,7 @@ export default function OrderHistoryPage() {
+                                                     {order.status === '─É├ú ho├án th├ánh' && (
+                                                         <ReviewDialog
+                                                             orderId={order.id}
+-                                                            type="order"
++                                                            type="all"
+                                                             orderItems={order.items.map((item: any) => ({
+                                                                 foodid: item.id || 0,
+                                                                 quantity: 1,
+diff --git a/src/components/shared/ReviewDialog.tsx b/src/components/shared/ReviewDialog.tsx
+index 9010b10..a471591 100644
+--- a/src/components/shared/ReviewDialog.tsx
++++ b/src/components/shared/ReviewDialog.tsx
+@@ -182,7 +182,7 @@ export function ReviewDialog({ orderId, orderItems = [], triggerElement, onRevie
+                 {triggerElement || (
+                     <Button variant="outline" className="rounded-xl border-orange-200 text-orange-600 bg-orange-50 hover:bg-orange-100 font-bold shadow-sm">
+                         <Star className="w-4 h-4 mr-2" />
+-                        ─É├ính gi├í ─æ╞ín h├áng
++                        {type === 'dish' ? '─É├ính gi├í m├│n' : '─É├ính gi├í ─æ╞ín h├áng'}
+                     </Button>
+                 )}
+             </DialogTrigger>
+@@ -192,7 +192,7 @@ export function ReviewDialog({ orderId, orderItems = [], triggerElement, onRevie
+                     <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-8 text-white relative">
+                         <DialogHeader>
+                             <DialogTitle className="text-2xl font-bold text-white">
+-                                {justSubmitted ? "Cß║úm ╞ín bß║ín!" : "─É├ính gi├í ─æ╞ín h├áng"}
++                                {justSubmitted ? "Cß║úm ╞ín bß║ín!" : type === 'dish' ? "─É├ính gi├í m├│n" : "─É├ính gi├í ─æ╞ín h├áng"}
+                             </DialogTitle>
+                             <DialogDescription className="text-orange-100 text-base">
+                                 {justSubmitted
+@@ -259,10 +259,12 @@ export function ReviewDialog({ orderId, orderItems = [], triggerElement, onRevie
+ 
+                                 {(type === 'all' || type === 'dish') && orderItems.length > 0 && (
+                                     <section className="space-y-6">
+-                                        <div className="flex items-center gap-2 mb-2">
+-                                            <div className="w-1 h-6 bg-orange-500 rounded-full"></div>
+-                                            <h4 className="font-bold text-gray-900 dark:text-gray-100 text-lg">─É├ính gi├í m├│n ─ân</h4>
+-                                        </div>
++                                        {type === 'all' && (
++                                            <div className="flex items-center gap-2 mb-2">
++                                                <div className="w-1 h-6 bg-orange-500 rounded-full"></div>
++                                                <h4 className="font-bold text-gray-900 dark:text-gray-100 text-lg">─É├ính gi├í m├│n</h4>
++                                            </div>
++                                        )}
+ 
+                                         <div className="space-y-6">
+                                             {orderItems.map((item) => (

@@ -1,0 +1,32 @@
+﻿*   4ed0446 Merge pull request #4 from quanghai8921-bot/bach-fix2
+|\  
+| * c26c976 fix: category display bug in admin menu
+| * 06e79fe update project
+* |   3878c7e Merge pull request #5 from quanghai8921-bot/Phong
+|\ \  
+| * | e2fa4b3 Update review dialog and add menu search
+|/ /  
+* |   3a2fb1b Merge pull request #2 from quanghai8921-bot/dat-feature
+|\ \  
+| * \   999c9ed fix: resolve merge conflict in menu page
+| |\ \  
+| * | | 722aa8e sß╗¡a cß╗Öt h├ánh ─æß╗Öng trang admin
+|  / /  
+* | |   1eb45f2 Merge pull request #3 from quanghai8921-bot/bao
+|\ \ \  
+| |_|/  
+|/| |   
+| * | b1818cc update voice
+|/ /  
+* |   2a03812 Merge pull request #1 from quanghai8921-bot/vinh
+|\ \  
+| |/  
+|/|   
+| * 1567005 fix: correct order status when user selects cash payment
+|/  
+* 3bd5b6f update
+* 5b4edd3 update
+* 2dbbf7f update
+* 5b8a48c fix
+* 975df38 Update
+* e9a479e Update

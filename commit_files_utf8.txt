@@ -1,0 +1,8 @@
+﻿src/app/admin/menu/page.tsx
+src/app/ai-advisor/page.tsx
+src/app/api/payments/route.ts
+src/app/dishes/[id]/page.tsx
+src/app/menu/page.tsx
+src/app/order/[id]/page.tsx
+src/app/profile/history/page.tsx
+src/components/shared/ReviewDialog.tsx
