@@ -195,7 +195,7 @@ export default function OrderTrackingPage() {
                             {currentStatus === 'completed' && params.id && (
                                 <ReviewDialog
                                     orderId={params.id as string}
-                                    type="order"
+                                    type="all"
                                     orderItems={currentOrder?.cartDetails?.map((item: any) => ({
                                         foodid: item.id,
                                         quantity: item.quantity,
@@ -226,8 +226,8 @@ export default function OrderTrackingPage() {
                                 <div className="absolute left-6 md:left-[10%] md:right-[10%] top-6 bottom-6 md:bottom-auto md:h-1 w-1 md:w-auto bg-gray-100 dark:bg-gray-800 rounded-full -z-10"></div>
                                 <div
                                     className={`absolute left-6 md:left-[10%] top-6 w-1 md:h-1 rounded-full -z-10 transition-all duration-700 ease-in-out ${['đang chờ', 'đã xác nhận'].includes(currentStatus) ? 'h-0 md:w-0' :
-                                            currentStatus === 'đang chuẩn bị' ? 'h-[40%] md:w-[40%] bg-orange-400' :
-                                                ['đang giao', 'đã hoàn thành'].includes(currentStatus) ? 'h-[90%] md:w-[80%] bg-green-500' : 'h-0 md:w-0'
+                                        currentStatus === 'đang chuẩn bị' ? 'h-[40%] md:w-[40%] bg-orange-400' :
+                                            ['đang giao', 'đã hoàn thành'].includes(currentStatus) ? 'h-[90%] md:w-[80%] bg-green-500' : 'h-0 md:w-0'
                                         }`}
                                 ></div>
 

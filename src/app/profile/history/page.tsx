@@ -170,7 +170,7 @@ export default function OrderHistoryPage() {
                                                     {order.status === 'Đã hoàn thành' && (
                                                         <ReviewDialog
                                                             orderId={order.id}
-                                                            type="order"
+                                                            type="all"
                                                             orderItems={order.items.map((item: any) => ({
                                                                 foodid: item.id || 0,
                                                                 quantity: 1,

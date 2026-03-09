@@ -88,6 +88,8 @@ function MenuContent() {
     const [selectedFlavors, setSelectedFlavors] = useState<string[]>([]);
     const [isPersonalized, setIsPersonalized] = useState(false);
 
+    const [searchQuery, setSearchQuery] = useState("");
+
     useEffect(() => {
         if (categoryParam) {
             setSelectedCategory(categoryParam);
@@ -163,10 +165,11 @@ function MenuContent() {
             matchPersonalized = (itemCategories.includes("Food") || itemCategories.includes("mon-chinh") || itemCategories.includes("suc-khoe")) && cals > 0 && cals < 600;
         }
 
+        const matchSearch = searchQuery === "" || item.title.toLowerCase().includes(searchQuery.toLowerCase()) || (item.desc && item.desc.toLowerCase().includes(searchQuery.toLowerCase()));
 
         if (item.foodstatus === "Unavailable") return false;
 
-        return matchCategory && matchBalance && matchDiets && matchAllergies && matchFlavors && matchPersonalized;
+        return matchCategory && matchBalance && matchDiets && matchAllergies && matchFlavors && matchPersonalized && matchSearch;
     });
 
     return (
@@ -178,7 +181,13 @@ function MenuContent() {
                 <div className="container mx-auto px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-2 text-gray-400 w-full max-w-md bg-gray-50 dark:bg-gray-800 rounded-full px-4 py-2 border border-gray-100 dark:border-gray-700 focus-within:ring-2 focus-within:ring-orange-100 transition-all">
                         <Search className="w-5 h-5" />
-                        <input type="text" placeholder="Tìm kiếm món ăn giàu Protein..." className="bg-transparent border-none outline-none w-full text-sm text-gray-700 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-500" />
+                        <input
+                            type="text"
+                            placeholder="Tìm kiếm món ăn giàu Protein..."
+                            className="bg-transparent border-none outline-none w-full text-sm text-gray-700 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
                         <Zap className="w-4 h-4 text-orange-500" />
                     </div>
                 </div>
