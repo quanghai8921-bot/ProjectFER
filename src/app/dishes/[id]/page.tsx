@@ -221,7 +221,7 @@ export default function DishPage() {
                         <ReviewDialog
                             orderId={eligibility.orderId!}
                             type="dish"
-                            orderItems={eligibility.orderItems}
+                            orderItems={eligibility.orderItems.filter((item: any) => item.foodid === (dish?.foodid || id))}
                             triggerElement={
                                 <div className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-4 rounded-2xl transition-all active:scale-95 flex items-center gap-2 cursor-pointer">
                                     <Star className="w-5 h-5 fill-white" />

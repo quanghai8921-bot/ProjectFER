@@ -182,7 +182,7 @@ export function ReviewDialog({ orderId, orderItems = [], triggerElement, onRevie
                 {triggerElement || (
                     <Button variant="outline" className="rounded-xl border-orange-200 text-orange-600 bg-orange-50 hover:bg-orange-100 font-bold shadow-sm">
                         <Star className="w-4 h-4 mr-2" />
-                        Đánh giá đơn hàng
+                        {type === 'dish' ? 'Đánh giá món' : 'Đánh giá đơn hàng'}
                     </Button>
                 )}
             </DialogTrigger>
@@ -192,7 +192,7 @@ export function ReviewDialog({ orderId, orderItems = [], triggerElement, onRevie
                     <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-8 text-white relative">
                         <DialogHeader>
                             <DialogTitle className="text-2xl font-bold text-white">
-                                {justSubmitted ? "Cảm ơn bạn!" : "Đánh giá đơn hàng"}
+                                {justSubmitted ? "Cảm ơn bạn!" : type === 'dish' ? "Đánh giá món" : "Đánh giá đơn hàng"}
                             </DialogTitle>
                             <DialogDescription className="text-orange-100 text-base">
                                 {justSubmitted
@@ -259,10 +259,12 @@ export function ReviewDialog({ orderId, orderItems = [], triggerElement, onRevie
 
                                 {(type === 'all' || type === 'dish') && orderItems.length > 0 && (
                                     <section className="space-y-6">
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <div className="w-1 h-6 bg-orange-500 rounded-full"></div>
-                                            <h4 className="font-bold text-gray-900 dark:text-gray-100 text-lg">Đánh giá món ăn</h4>
-                                        </div>
+                                        {type === 'all' && (
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <div className="w-1 h-6 bg-orange-500 rounded-full"></div>
+                                                <h4 className="font-bold text-gray-900 dark:text-gray-100 text-lg">Đánh giá món</h4>
+                                            </div>
+                                        )}
 
                                         <div className="space-y-6">
                                             {orderItems.map((item) => (
