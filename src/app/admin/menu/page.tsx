@@ -162,7 +162,7 @@ export default function MenuManagement() {
                 setCategories(data)
 
                 if (data.length > 0 && !newDish.category) {
-} {
+                } {
                     // Start with no categories or the first one if we want a default
                     // For multi-select, it might be better to start empty or with a default
                 }
@@ -441,9 +441,9 @@ export default function MenuManagement() {
                                                         key={cat.categoryid}
                                                         onClick={() => {
                                                             setNewDish(prev => ({
-                                                         ...prev,
-                                                           category: cat.categoryid
-                                                           }))
+                                                                ...prev,
+                                                                category: cat.categoryid
+                                                            }))
                                                         }}
                                                         className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${isSelected
                                                             ? 'bg-orange-50 dark:bg-orange-900/30 border-orange-500 text-orange-700 dark:text-orange-300'
@@ -479,37 +479,7 @@ export default function MenuManagement() {
                                         ))}
                                     </div>
                                 </div>
-                                {editingDishId && (
-                                    <div className="space-y-3">
-                                        <Label className="text-base font-semibold">Trạng thái hiển thị</Label>
-                                        <div className="flex gap-2">
-                                            <Button
-                                                type="button"
-                                                variant={newDish.foodstatus === "Available" ? "default" : "outline"}
-                                                className={newDish.foodstatus === "Available" ? "bg-green-600 hover:bg-green-700" : ""}
-                                                onClick={() => setNewDish(prev => ({ ...prev, foodstatus: "Available" }))}
-                                            >
-                                                Còn món
-                                            </Button>
-                                            <Button
-                                                type="button"
-                                                variant={newDish.foodstatus === "Out of Stock" ? "default" : "outline"}
-                                                className={newDish.foodstatus === "Out of Stock" ? "bg-yellow-600 hover:bg-yellow-700" : ""}
-                                                onClick={() => setNewDish(prev => ({ ...prev, foodstatus: "Out of Stock" }))}
-                                            >
-                                                Hết món
-                                            </Button>
-                                            <Button
-                                                type="button"
-                                                variant={newDish.foodstatus === "Unavailable" ? "default" : "outline"}
-                                                className={newDish.foodstatus === "Unavailable" ? "bg-red-600 hover:bg-red-700" : ""}
-                                                onClick={() => setNewDish(prev => ({ ...prev, foodstatus: "Unavailable" }))}
-                                            >
-                                                Ngừng bán
-                                            </Button>
-                                        </div>
-                                    </div>
-                                )}
+
                             </div>
 
 
@@ -752,24 +722,24 @@ export default function MenuManagement() {
                                                 <span className="font-medium text-gray-700 dark:text-gray-200">{dish.title}</span>
                                             </td>
                                             <td className="p-4">
-  {(() => {
-    const cat = categories.find(
-  c => String(c.categoryid) === String(dish.category)
-)
-    if (!cat) {
-      return <span className="text-gray-400 text-xs italic">Chưa chọn</span>
-    }
+                                                {(() => {
+                                                    const cat = categories.find(
+                                                        c => String(c.categoryid) === String(dish.category)
+                                                    )
+                                                    if (!cat) {
+                                                        return <span className="text-gray-400 text-xs italic">Chưa chọn</span>
+                                                    }
 
-    const catName =
-      CATEGORY_NAME_TRANSLATIONS[cat.categoryname] || cat.categoryname
+                                                    const catName =
+                                                        CATEGORY_NAME_TRANSLATIONS[cat.categoryname] || cat.categoryname
 
-    return (
-      <span className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-medium bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border border-orange-100 dark:border-orange-800">
-        {catName}
-      </span>
-    )
-  })()}
-</td>
+                                                    return (
+                                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-medium bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border border-orange-100 dark:border-orange-800">
+                                                            {catName}
+                                                        </span>
+                                                    )
+                                                })()}
+                                            </td>
                                             <td className="p-4 text-gray-600 dark:text-gray-400 font-medium">{dish.price}</td>
                                             <td className="p-4">
                                                 <select
@@ -835,24 +805,24 @@ export default function MenuManagement() {
                                             <div className="flex-1 min-w-0">
                                                 <h4 className="font-bold text-gray-900 dark:text-gray-100 truncate">{dish.title}</h4>
                                                 <div className="flex flex-wrap gap-1 mt-1">
-    {(() => {
-        const cat = categories.find(
-  c => String(c.categoryid) === String(dish.category)
-)
+                                                    {(() => {
+                                                        const cat = categories.find(
+                                                            c => String(c.categoryid) === String(dish.category)
+                                                        )
 
-        if (!cat) {
-            return <span className="text-gray-400 text-[9px] italic">Chưa chọn</span>
-        }
+                                                        if (!cat) {
+                                                            return <span className="text-gray-400 text-[9px] italic">Chưa chọn</span>
+                                                        }
 
-        const catName = CATEGORY_NAME_TRANSLATIONS[cat.categoryname] || cat.categoryname
+                                                        const catName = CATEGORY_NAME_TRANSLATIONS[cat.categoryname] || cat.categoryname
 
-        return (
-            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border border-orange-100 dark:border-orange-800/50 capitalize">
-                {catName}
-            </span>
-        )
-    })()}
-</div>
+                                                        return (
+                                                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border border-orange-100 dark:border-orange-800/50 capitalize">
+                                                                {catName}
+                                                            </span>
+                                                        )
+                                                    })()}
+                                                </div>
                                                 <p className="text-orange-600 dark:text-orange-400 font-bold text-sm mt-1">{dish.price}</p>
                                             </div>
                                         </div>

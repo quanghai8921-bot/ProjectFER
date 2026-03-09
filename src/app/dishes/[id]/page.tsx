@@ -207,34 +207,6 @@ export default function DishPage() {
 
                 <Separator className="my-12 dark:bg-gray-800" />
 
-                {isMounted && eligibility.eligible && (
-                    <div className="mb-12 bg-gradient-to-r from-orange-50 to-white dark:from-orange-950/20 dark:to-gray-900 p-8 rounded-[40px] border border-orange-100 dark:border-orange-900/30 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
-                        <div className="flex items-center gap-4">
-                            <div className="w-16 h-16 bg-white dark:bg-gray-800 rounded-2xl flex items-center justify-center shadow-md">
-                                <Star className="w-8 h-8 text-orange-400 fill-orange-400" />
-                            </div>
-                            <div>
-                                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Món ăn này rất tuyệt, đúng không?</h3>
-                                <p className="text-gray-500 dark:text-gray-400">Bạn đã thưởng thức món này, hãy chia sẻ cảm nhận với mọi người nhé!</p>
-                            </div>
-                        </div>
-                        <ReviewDialog
-                            orderId={eligibility.orderId!}
-                            type="dish"
-                            orderItems={eligibility.orderItems.filter((item: any) => item.foodid === (dish?.foodid || id))}
-                            triggerElement={
-                                <div className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-4 rounded-2xl transition-all active:scale-95 flex items-center gap-2 cursor-pointer">
-                                    <Star className="w-5 h-5 fill-white" />
-                                    Viết đánh giá ngay
-                                </div>
-                            }
-                            onReviewSubmitted={() => {
-                                setEligibility({ eligible: false, orderId: null, orderItems: [] });
-                                setReviewRefreshKey(prev => prev + 1);
-                            }}
-                        />
-                    </div>
-                )}
 
                 <DishReviews foodId={dish.foodid} refreshKey={reviewRefreshKey} />
 
