@@ -72,7 +72,7 @@ interface Dish {
     price: string
     slug: string
     image: string
-    categories: string[]
+    category: string
     dietaryBalance: string
     aiReview: {
         summary: string
@@ -94,7 +94,7 @@ const DEFAULT_DISH: Partial<Dish> = {
     calories: "",
     image: "/images/bunchahanoi.jpg",
     rating: 5,
-    categories: [],
+    category: "",
     dietaryBalance: "Cân bằng",
     aiReview: { summary: "", tags: [] },
     ingredients: [],
@@ -161,7 +161,8 @@ export default function MenuManagement() {
                 const data: Category[] = await res.json()
                 setCategories(data)
 
-                if (data.length > 0 && (!newDish.categories || newDish.categories.length === 0)) {
+                if (data.length > 0 && !newDish.category) {
+} {
                     // Start with no categories or the first one if we want a default
                     // For multi-select, it might be better to start empty or with a default
                 }
@@ -256,7 +257,7 @@ export default function MenuManagement() {
         setIsSubmitting(true)
         setUploadError("")
 
-        if (!newDish.categories || newDish.categories.length === 0) {
+        if (!newDish.category) {
             alert("Vui lòng chọn ít nhất một danh mục cho món ăn!");
             setIsSubmitting(false);
             return;
@@ -429,21 +430,20 @@ export default function MenuManagement() {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-3">
-                                    <Label className="text-base font-semibold">Danh mục (Chọn nhiều)</Label>
+                                    <Label className="text-base font-semibold">Danh mục</Label>
                                     <div className="space-y-2">
                                         {categories.length > 0 ? (
                                             categories.map(cat => {
-                                                const isSelected = newDish.categories?.includes(cat.categoryid)
+                                                const isSelected = newDish.category === cat.categoryid
                                                 const Icon = CATEGORY_ICON_MAP[cat.categoryname] || CATEGORY_ICON_MAP["Mặc định"]
                                                 return (
                                                     <div
                                                         key={cat.categoryid}
                                                         onClick={() => {
-                                                            const current = newDish.categories || []
-                                                            const updated = current.includes(cat.categoryid)
-                                                                ? current.filter(id => id !== cat.categoryid)
-                                                                : [...current, cat.categoryid]
-                                                            setNewDish(prev => ({ ...prev, categories: updated }))
+                                                            setNewDish(prev => ({
+                                                         ...prev,
+                                                           category: cat.categoryid
+                                                           }))
                                                         }}
                                                         className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${isSelected
                                                             ? 'bg-orange-50 dark:bg-orange-900/30 border-orange-500 text-orange-700 dark:text-orange-300'
@@ -752,21 +752,24 @@ export default function MenuManagement() {
                                                 <span className="font-medium text-gray-700 dark:text-gray-200">{dish.title}</span>
                                             </td>
                                             <td className="p-4">
-                                                <div className="flex flex-wrap gap-1">
-                                                    {(dish.categories || []).map(catId => {
-                                                        const cat = categories.find(c => c.categoryid === catId);
-                                                        const catName = cat ? cat.categoryname : catId;
-                                                        return (
-                                                            <span key={catId} className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-medium bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border border-orange-100 dark:border-orange-800">
-                                                                {CATEGORY_NAME_TRANSLATIONS[catName] || catName}
-                                                            </span>
-                                                        );
-                                                    })}
-                                                    {(!dish.categories || dish.categories.length === 0) && (
-                                                        <span className="text-gray-400 text-xs italic">Chưa chọn</span>
-                                                    )}
-                                                </div>
-                                            </td>
+  {(() => {
+    const cat = categories.find(
+  c => String(c.categoryid) === String(dish.category)
+)
+    if (!cat) {
+      return <span className="text-gray-400 text-xs italic">Chưa chọn</span>
+    }
+
+    const catName =
+      CATEGORY_NAME_TRANSLATIONS[cat.categoryname] || cat.categoryname
+
+    return (
+      <span className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-medium bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border border-orange-100 dark:border-orange-800">
+        {catName}
+      </span>
+    )
+  })()}
+</td>
                                             <td className="p-4 text-gray-600 dark:text-gray-400 font-medium">{dish.price}</td>
                                             <td className="p-4">
                                                 <select
@@ -832,16 +835,24 @@ export default function MenuManagement() {
                                             <div className="flex-1 min-w-0">
                                                 <h4 className="font-bold text-gray-900 dark:text-gray-100 truncate">{dish.title}</h4>
                                                 <div className="flex flex-wrap gap-1 mt-1">
-                                                    {(dish.categories || []).map(catId => {
-                                                        const cat = categories.find(c => c.categoryid === catId);
-                                                        const catName = cat ? cat.categoryname : catId;
-                                                        return (
-                                                            <span key={catId} className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border border-orange-100 dark:border-orange-800/50 capitalize">
-                                                                {CATEGORY_NAME_TRANSLATIONS[catName] || catName}
-                                                            </span>
-                                                        );
-                                                    })}
-                                                </div>
+    {(() => {
+        const cat = categories.find(
+  c => String(c.categoryid) === String(dish.category)
+)
+
+        if (!cat) {
+            return <span className="text-gray-400 text-[9px] italic">Chưa chọn</span>
+        }
+
+        const catName = CATEGORY_NAME_TRANSLATIONS[cat.categoryname] || cat.categoryname
+
+        return (
+            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border border-orange-100 dark:border-orange-800/50 capitalize">
+                {catName}
+            </span>
+        )
+    })()}
+</div>
                                                 <p className="text-orange-600 dark:text-orange-400 font-bold text-sm mt-1">{dish.price}</p>
                                             </div>
                                         </div>
