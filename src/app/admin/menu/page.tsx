@@ -479,37 +479,6 @@ export default function MenuManagement() {
                                         ))}
                                     </div>
                                 </div>
-                                {editingDishId && (
-                                    <div className="space-y-3">
-                                        <Label className="text-base font-semibold">Trạng thái hiển thị</Label>
-                                        <div className="flex gap-2">
-                                            <Button
-                                                type="button"
-                                                variant={newDish.foodstatus === "Available" ? "default" : "outline"}
-                                                className={newDish.foodstatus === "Available" ? "bg-green-600 hover:bg-green-700" : ""}
-                                                onClick={() => setNewDish(prev => ({ ...prev, foodstatus: "Available" }))}
-                                            >
-                                                Còn món
-                                            </Button>
-                                            <Button
-                                                type="button"
-                                                variant={newDish.foodstatus === "Out of Stock" ? "default" : "outline"}
-                                                className={newDish.foodstatus === "Out of Stock" ? "bg-yellow-600 hover:bg-yellow-700" : ""}
-                                                onClick={() => setNewDish(prev => ({ ...prev, foodstatus: "Out of Stock" }))}
-                                            >
-                                                Hết món
-                                            </Button>
-                                            <Button
-                                                type="button"
-                                                variant={newDish.foodstatus === "Unavailable" ? "default" : "outline"}
-                                                className={newDish.foodstatus === "Unavailable" ? "bg-red-600 hover:bg-red-700" : ""}
-                                                onClick={() => setNewDish(prev => ({ ...prev, foodstatus: "Unavailable" }))}
-                                            >
-                                                Ngừng bán
-                                            </Button>
-                                        </div>
-                                    </div>
-                                )}
                             </div>
 
 
