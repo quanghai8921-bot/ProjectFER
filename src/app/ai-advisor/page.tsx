@@ -259,7 +259,7 @@ export default function AIAdvisorPage() {
         } else {
             const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
             const recognition = new SpeechRecognition();
-            recognition.continuous = true;
+            recognition.continuous = false;
             recognition.interimResults = true;
             recognition.lang = 'vi-VN';
 
