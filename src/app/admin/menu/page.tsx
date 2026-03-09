@@ -753,8 +753,9 @@ export default function MenuManagement() {
                                             </td>
                                             <td className="p-4">
   {(() => {
-    const cat = categories.find(c => c.categoryid === dish.category)
-
+    const cat = categories.find(
+  c => String(c.categoryid) === String(dish.category)
+)
     if (!cat) {
       return <span className="text-gray-400 text-xs italic">Chưa chọn</span>
     }
@@ -835,7 +836,9 @@ export default function MenuManagement() {
                                                 <h4 className="font-bold text-gray-900 dark:text-gray-100 truncate">{dish.title}</h4>
                                                 <div className="flex flex-wrap gap-1 mt-1">
     {(() => {
-        const cat = categories.find(c => c.categoryid === dish.category)
+        const cat = categories.find(
+  c => String(c.categoryid) === String(dish.category)
+)
 
         if (!cat) {
             return <span className="text-gray-400 text-[9px] italic">Chưa chọn</span>

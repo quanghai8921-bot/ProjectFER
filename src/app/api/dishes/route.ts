@@ -11,43 +11,60 @@ export async function GET() {
         const { data: dishes, error } = await supabase
             .from('fooditems')
             .select(`
-                *,
-                categories:categoryid (categoryname),
-                foodreviews (rating)
-            `);
+    *,
+    categories:categoryid (
+        categoryid,
+        categoryname
+    ),
+    foodreviews (rating)
+`)
 
         if (error) throw error;
 
 
         const formattedDishes = dishes.map(dish => {
-            const reviews = (dish as any).foodreviews || [];
-            const reviewCount = reviews.length;
-            const avgRating = reviewCount > 0
-                ? Number((reviews.reduce((acc: number, curr: any) => acc + curr.rating, 0) / reviewCount).toFixed(1))
-                : 5;
+            
+    const reviews = (dish as any).foodreviews || [];
+    const reviewCount = reviews.length;
 
-            const metadata = dish.ingredients ? JSON.parse(dish.ingredients) : {};
-            return {
-                id: dish.foodid,
-                title: dish.foodname,
-                desc: dish.descriptions,
-                price: dish.price ? dish.price.toLocaleString('vi-VN') + " đ" : "0 đ",
-                image: dish.foodimageurl,
-                categories: metadata.categories || (dish.categoryid ? [dish.categoryid] : []),
-                calories: dish.calories ? dish.calories + " kcal" : "0 kcal",
-                time: dish.preptime ? dish.preptime + "m" : "0m",
-                rating: avgRating,
-                reviewCount: reviewCount,
-                dietaryBalance: metadata.dietaryBalance || "Cân bằng",
-                aiReview: metadata.aiReview || { summary: "", tags: [] },
-                ingredients: metadata.ingredients || [],
-                extras: [],
-                diets: metadata.diets || [],
-                allergies: dish.allergyinfo ? JSON.parse(dish.allergyinfo) : [],
-                flavors: metadata.flavors || [],
-                foodstatus: dish.foodstatus || 'Available'
-            };
-        });
+    const avgRating = reviewCount > 0
+        ? Number((reviews.reduce((acc: number, curr: any) => acc + curr.rating, 0) / reviewCount).toFixed(1))
+        : 5;
+
+    const metadata = dish.ingredients ? JSON.parse(dish.ingredients) : {};
+
+    return {
+        id: dish.foodid,
+        title: dish.foodname,
+        desc: dish.descriptions,
+        price: dish.price ? dish.price.toLocaleString('vi-VN') + " đ" : "0 đ",
+        image: dish.foodimageurl,
+
+        categories: metadata.categories || (
+            dish.categories?.categoryname
+                ? [{
+                    categoryid: dish.categoryid,
+                    categoryname: dish.categories.categoryname
+                }]
+                : []
+        ),
+
+        category: dish.categoryid || null,
+
+        calories: dish.calories ? dish.calories + " kcal" : "0 kcal",
+        time: dish.preptime ? dish.preptime + "m" : "0m",
+        rating: avgRating,
+        reviewCount: reviewCount,
+        dietaryBalance: metadata.dietaryBalance || "Cân bằng",
+        aiReview: metadata.aiReview || { summary: "", tags: [] },
+        ingredients: metadata.ingredients || [],
+        extras: [],
+        diets: metadata.diets || [],
+        allergies: dish.allergyinfo ? JSON.parse(dish.allergyinfo) : [],
+        flavors: metadata.flavors || [],
+        foodstatus: dish.foodstatus || 'Available'
+    };
+});
 
         return NextResponse.json(formattedDishes);
     } catch (error: any) {

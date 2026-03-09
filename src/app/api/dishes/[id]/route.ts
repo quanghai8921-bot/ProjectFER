@@ -60,7 +60,7 @@ export async function GET(
             desc: dish.descriptions,
             price: dish.price ? dish.price.toLocaleString('vi-VN') + " đ" : "0 đ",
             image: dish.foodimageurl,
-            categories: metadata.categories || (dish.categoryid ? [dish.categoryid] : []),
+            category: dish.categoryid,
             calories: dish.calories ? dish.calories + " kcal" : "0 kcal",
             time: dish.preptime ? dish.preptime + "m" : "0m",
             rating: avgRating,
@@ -143,7 +143,7 @@ export async function PUT(
         const { error: foodError } = await supabase
             .from('fooditems')
             .update({
-                categoryid: dish.categories?.[0] || null,
+                categoryid: dish.category,
                 foodname: dish.title,
                 price: rawPrice,
                 foodimageurl: dish.image,
