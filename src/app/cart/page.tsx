@@ -603,6 +603,7 @@ export default function CartPage() {
                                             setCartItems([]);
                                             setAppliedVoucher(null);
                                             window.dispatchEvent(new Event('cartUpdate'));
+                                            window.dispatchEvent(new Event('orderUpdate'));
 
                                             if (paymentMethod === 'cash') {
                                                 router.push(`/order/${data.orderId}`);

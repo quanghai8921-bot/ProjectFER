@@ -52,7 +52,20 @@ export default function OrderHistoryPage() {
 
         const fetchOrders = async () => {
             try {
-                const res = await fetch('/api/orders');
+                const userStr = localStorage.getItem("user");
+                if (!userStr) {
+                    setIsLoading(false);
+                    return;
+                }
+                const user = JSON.parse(userStr);
+                const userId = user.userid || user.UserId || user.id;
+
+                if (!userId) {
+                    setIsLoading(false);
+                    return;
+                }
+
+                const res = await fetch(`/api/orders?userid=${userId}`);
                 if (res.ok) {
                     const data = await res.json();
                     if (data.orders && Array.isArray(data.orders)) {
@@ -234,8 +247,6 @@ export default function OrderHistoryPage() {
                                     </div>
                                 </div>
                                 <div className="flex justify-between items-center mt-8 pt-4 border-t border-gray-50 dark:border-gray-800">
-                                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Mục tiêu: {calorieGoal.toLocaleString('vi-VN')} kcal</span>
-                                    <span className="text-xs font-bold text-green-500 dark:text-green-400 tracking-wide">Đạt {caloriePercentage}%</span>
                                 </div>
                             </div>
                         </div>

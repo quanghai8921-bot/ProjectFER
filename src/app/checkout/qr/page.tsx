@@ -101,6 +101,7 @@ export default function QRPaymentPage() {
 
 
                 window.dispatchEvent(new Event('cartUpdate'));
+                window.dispatchEvent(new Event('orderUpdate'));
 
 
                 setTimeout(() => {

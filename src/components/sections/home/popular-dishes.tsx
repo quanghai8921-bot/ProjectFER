@@ -150,24 +150,22 @@ export function PopularDishes() {
                                     </p>
 
                                     <div className="flex flex-row items-center justify-between pt-6 border-t border-gray-100 dark:border-gray-800 gap-2 mt-auto">
-                                        <div className="flex items-center gap-3 sm:gap-6">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-8 h-8 rounded-lg bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center shrink-0">
-                                                    <Flame className="w-4 h-4 text-orange-500" />
-                                                </div>
-                                                <div className="flex flex-col">
-                                                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter hidden xs:block">Năng lượng</span>
-                                                    <span className="text-xs font-black text-gray-900 dark:text-gray-100 whitespace-nowrap">{dish.calories}</span>
-                                                </div>
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-8 h-8 rounded-lg bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center shrink-0">
+                                                <Flame className="w-4 h-4 text-orange-500" />
                                             </div>
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center shrink-0">
-                                                    <Clock className="w-4 h-4 text-blue-500" />
-                                                </div>
-                                                <div className="flex flex-col">
-                                                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter hidden xs:block">Thời gian</span>
-                                                    <span className="text-xs font-black text-gray-900 dark:text-gray-100 whitespace-nowrap">{dish.time}</span>
-                                                </div>
+                                            <div className="flex flex-col">
+                                                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter hidden xs:block">Năng lượng</span>
+                                                <span className="text-xs font-black text-gray-900 dark:text-gray-100 whitespace-nowrap">{dish.calories}</span>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center shrink-0">
+                                                <Clock className="w-4 h-4 text-blue-500" />
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter hidden xs:block">Thời gian</span>
+                                                <span className="text-xs font-black text-gray-900 dark:text-gray-100 whitespace-nowrap">{dish.time}</span>
                                             </div>
                                         </div>
 

@@ -2,10 +2,10 @@ import { Beef, Coffee, Cake, Leaf } from "lucide-react"
 import Link from "next/link"
 
 const categories = [
-    { name: "Món chính", icon: Beef, slug: "mon-chinh" },
-    { name: "Đồ uống", icon: Coffee, slug: "do-uong" },
-    { name: "Tráng miệng", icon: Cake, slug: "trang-mieng" },
-    { name: "Sức khỏe", icon: Leaf, slug: "suc-khoe" },
+    { name: "Món chính", icon: Beef, slug: "maincourse" },
+    { name: "Đồ uống", icon: Coffee, slug: "drinks" },
+    { name: "Tráng miệng", icon: Cake, slug: "dessert" },
+    { name: "Món ăn tốt cho sức khỏe", icon: Leaf, slug: "healthyfood" },
 ]
 
 export function Categories() {
@@ -26,12 +26,12 @@ export function Categories() {
                         <Link
                             key={index}
                             href={`/menu?category=${encodeURIComponent(cat.slug)}`}
-                            className="group flex flex-col items-center justify-center p-6 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl shadow-sm hover:shadow-md hover:border-primary/20 hover:bg-orange-50/50 dark:hover:bg-orange-900/20 transition-all min-w-[120px] h-[120px]"
+                            className="group flex flex-col items-center justify-center p-4 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl shadow-sm hover:shadow-md hover:border-primary/20 hover:bg-orange-50/50 dark:hover:bg-orange-900/20 transition-all min-w-[120px] h-auto min-h-[140px]"
                         >
-                            <div className="w-10 h-10 bg-gray-50 dark:bg-gray-800 text-gray-400 group-hover:bg-white dark:group-hover:bg-gray-700 group-hover:text-primary rounded-full flex items-center justify-center mb-3 transition-colors">
+                            <div className="w-10 h-10 bg-gray-50 dark:bg-gray-800 text-gray-400 group-hover:bg-white dark:group-hover:bg-gray-700 group-hover:text-primary rounded-full flex items-center justify-center mb-3 transition-colors shrink-0">
                                 <cat.icon className="h-5 w-5" />
                             </div>
-                            <span className="text-sm font-medium text-gray-600 dark:text-gray-400 group-hover:text-primary transition-colors">
+                            <span className="text-sm font-medium text-gray-600 dark:text-gray-400 group-hover:text-primary transition-colors text-center leading-tight">
                                 {cat.name}
                             </span>
                         </Link>

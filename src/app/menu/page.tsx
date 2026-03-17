@@ -47,7 +47,7 @@ const CATEGORY_ICON_MAP: Record<string, any> = {
 
 const CATEGORY_NAME_TRANSLATIONS: Record<string, string> = {
     "Main Course": "Món chính",
-    "Healthy Food": "Sức khỏe",
+    "Healthy Food": "Món ăn tốt cho sức khỏe",
     "Drinks": "Đồ uống",
     "Dessert": "Tráng miệng",
     "Food": "Món ăn"
@@ -89,6 +89,8 @@ function MenuContent() {
     const [isPersonalized, setIsPersonalized] = useState(false);
 
     const [searchQuery, setSearchQuery] = useState("");
+    const [consumedCalories, setConsumedCalories] = useState(0);
+    const [calorieGoal, setCalorieGoal] = useState(2000);
 
     useEffect(() => {
         if (categoryParam) {
@@ -99,10 +101,13 @@ function MenuContent() {
     useEffect(() => {
         const initData = async () => {
             setIsLoading(true);
-            await Promise.all([fetchDishes(), fetchCategories()]);
+            await Promise.all([fetchDishes(), fetchCategories(), fetchDailyCalories()]);
             setIsLoading(false);
         };
         initData();
+
+        window.addEventListener('orderUpdate', fetchDailyCalories);
+        return () => window.removeEventListener('orderUpdate', fetchDailyCalories);
     }, []);
 
     const fetchCategories = async () => {
@@ -114,6 +119,41 @@ function MenuContent() {
             }
         } catch (error) {
             console.error("Lỗi khi tải danh mục:", error);
+        }
+    };
+
+    const fetchDailyCalories = async () => {
+        try {
+            const userStr = localStorage.getItem("user");
+            if (!userStr) return;
+            
+            const user = JSON.parse(userStr);
+            const userId = user.userid || user.UserId || user.id;
+            if (!userId) return;
+
+            const res = await fetch(`/api/orders?userid=${userId}`);
+            if (res.ok) {
+                const data = await res.json();
+                const orders = data.orders || [];
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                let totalCals = 0;
+                orders.forEach((order: any) => {
+                    const orderDate = new Date(order.ordertime);
+                    const isActiveOrder = [1, 2, 3, 4, 5].includes(Number(order.orderstatus));
+                    
+                    if (isActiveOrder && orderDate >= today) {
+                        order.orderitems?.forEach((item: any) => {
+                            const calValue = parseInt(String(item.fooditems?.calories || "0").replace(/\D/g, '')) || 0;
+                            totalCals += calValue * (item.quantity || 1);
+                        });
+                    }
+                });
+                setConsumedCalories(totalCals);
+            }
+        } catch (error) {
+            console.error("Lỗi khi tính toán calo:", error);
         }
     };
 
@@ -150,7 +190,12 @@ function MenuContent() {
         const itemCategories = item.categories || [];
         const itemBalance = item.dietaryBalance || "Cân bằng";
 
-        const matchCategory = selectedCategory === "All" || itemCategories.includes(selectedCategory);
+        // Chuẩn hóa categories để so sánh (hỗ trợ cả mảng string và mảng object)
+        const categoryIds = itemCategories.map(cat => 
+            typeof cat === 'string' ? cat : (cat as any).categoryid
+        );
+
+        const matchCategory = selectedCategory === "All" || categoryIds.includes(selectedCategory);
         const matchBalance = selectedBalances.length === 0 || selectedBalances.includes(itemBalance);
 
         const matchDiets = selectedDiets.length === 0 || selectedDiets.some(d => item.diets?.includes(d));
@@ -162,7 +207,7 @@ function MenuContent() {
         let matchPersonalized = true;
         if (isPersonalized) {
             const cals = parseInt((item.calories || "0").replace(/\D/g, '')) || 0;
-            matchPersonalized = (itemCategories.includes("Food") || itemCategories.includes("mon-chinh") || itemCategories.includes("suc-khoe")) && cals > 0 && cals < 600;
+            matchPersonalized = (categoryIds.includes("Food") || categoryIds.includes("maincourse") || categoryIds.includes("healthyfood")) && cals > 0 && cals < 600;
         }
 
         const matchSearch = searchQuery === "" || item.title.toLowerCase().includes(searchQuery.toLowerCase()) || (item.desc && item.desc.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -201,21 +246,24 @@ function MenuContent() {
                     <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 transition-colors">
                         <div className="flex items-center gap-2 mb-4 text-orange-600 font-bold tracking-wide text-[10px] uppercase">
                             <Dumbbell className="w-3 h-3" />
-                            Mục tiêu dinh dưỡng
+                            Thống kê calo trong ngày
                         </div>
 
-                        <div className="mb-2 flex justify-between items-end">
-                            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Calo còn lại</span>
-                            <span className="text-3xl font-bold text-gray-900 dark:text-gray-100 leading-none">650 <span className="text-xs font-medium text-gray-400 dark:text-gray-500">kcal</span></span>
+                        <div className="mb-4 flex flex-col">
+                            <span className="text-5xl font-black text-gray-900 dark:text-gray-100 leading-none">
+                                {consumedCalories.toLocaleString('vi-VN')} <span className="text-sm font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">kcal</span>
+                            </span>
                         </div>
 
-                        <div className="h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden mb-3">
-                            <div className="h-full bg-gradient-to-r from-orange-400 to-orange-600 w-[65%]" />
+                        <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden mb-3">
+                            <div 
+                                className="h-full bg-gradient-to-r from-orange-400 to-orange-500 transition-all duration-1000" 
+                                style={{ width: `${Math.min(100, (consumedCalories / calorieGoal) * 100)}%` }}
+                            />
                         </div>
 
-                        <div className="flex justify-between text-[10px] font-medium text-gray-400 uppercase tracking-wide">
-                            <span>1350 đã dùng</span>
-                            <span>Mục tiêu: 2000</span>
+                        <div className="flex justify-between text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wide">
+                            <span className="text-green-500">Đã tiêu thụ</span>
                         </div>
                     </div>
 
